@@ -1,7 +1,8 @@
 ---Запрос для получения QR-кодов для подтверждения присутствия
 SELECT
     QRCodes.QRCodeID,
-    QRCodes.CodeValue AS ConfirmationQRCode
+    QRCodes.CodeValue AS ConfirmationQRCode,
+    QRCodes.IsUsed
 FROM
     ScheduleQRCodes
 JOIN

@@ -3,17 +3,18 @@ package sqlite
 
 import (
 	// "database/sql"
+	"chinai-journal/internal/storage"
 	"errors"
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"time"
 )
 
 const (
 	qfGetConfirmCodeBySchedId = "/home/orenvady/Repos/go/chinai-journal/internal/storage/sqlite/queries/get_confirmation_code_using_schedule_id.sql"
-	qfGetRoomByStudentId      = "/home/orenvady/Repos/go/chinai-journal/internal/storage/sqlite/queries/get_room_using_schedule_id.sql"
-	qfGetRoomCodeByScheduleId = "/home/orenvady/Repos/go/chinai-journal/internal/storage/sqlite/queries/get_room_code_using_schedule_id.sql"
+	qfGetRoomBySchedId        = "/home/orenvady/Repos/go/chinai-journal/internal/storage/sqlite/queries/get_room_using_schedule_id.sql"
 	qfGetSheduleByStudentId   = "/home/orenvady/Repos/go/chinai-journal/internal/storage/sqlite/queries/get_schedule_using_student_id.sql"
 )
 
@@ -22,24 +23,21 @@ func (s *Storage) GetConfirmCodesByStudentId(studentID string) (string, string, 
 	const op = "storage.sqlite.GetConfirmCodesByStudentId"
 
 	// Step 1: Get Schedule ID for the student
-	scheduleID, err := s.getScheduleIDByStudentID(studentID)
+	scheduleID, err := s.getScheduleIDByStudentID(studentID, time.Now())
 	if err != nil {
 		return "", "", fmt.Errorf("%s: %v", op, err)
 	}
-
-	// Step 2: Get Room information for the lesson using the schedule ID
-	// room, err := s.getRoomByScheduleID(scheduleID)
-	// if err != nil {
-	// 	return "", "", fmt.Errorf("%s: %v", op, err)
-	// }
 
 	// Step 3: Get Confirmation Codes for the specific lesson using the schedule ID and current server time
 	if err != nil {
 		return "", "", fmt.Errorf("%s: %v", op, err)
 	}
 	firstCode, secondCode, err := s.getConfirmationCodes(scheduleID, time.Now())
+	if err != nil {
+		return "", "", fmt.Errorf("%s: %v", op, err)
+	}
 
-	return fmt.Sprintf("%d", firstCode), fmt.Sprintf("%d", secondCode), nil
+	return firstCode, secondCode, nil
 }
 
 // DONE
@@ -47,6 +45,9 @@ func (s *Storage) getScheduleIDByStudentID(studentID string, currentTime time.Ti
 	const op = "storage.sqlite.getScheduleIDByStudentID"
 
 	query, err := readQueryFromFile(qfGetSheduleByStudentId)
+	if err != nil {
+		return -1, fmt.Errorf("%s: %v", op, err)
+	}
 
 	rows, err := s.db.Query(query, studentID)
 	if err != nil {
@@ -55,6 +56,14 @@ func (s *Storage) getScheduleIDByStudentID(studentID string, currentTime time.Ti
 	defer rows.Close()
 
 	var scheduleId int = -1
+
+	// По идее это должно быть в конфигах, но мне лень
+	location, err := time.LoadLocation("Asia/Bishkek")
+	if err != nil {
+		log.Println(fmt.Errorf("%s: %v", op, err))
+	}
+
+	currentDate := currentTime.In(location).Format("2006-01-02")
 
 	// finding needed id
 	for rows.Next() {
@@ -80,11 +89,19 @@ func (s *Storage) getScheduleIDByStudentID(studentID string, currentTime time.Ti
 			log.Println(fmt.Errorf("%s: %v", op, err))
 		}
 
-		if currentTime.Weekday().String() == dayOfWeek {
+		fullTimeString := fmt.Sprintf("%s %s", currentDate, timeSlot)
+
+		userTime, err := time.ParseInLocation("2006-01-02 15:04:05", fullTimeString, location)
+		if err != nil {
+			log.Println(fmt.Errorf("error could not parse time %s: %v", op, err))
+		}
+
+		timeDelta := currentTime.Sub(userTime)
+
+		if currentTime.Weekday().String() == dayOfWeek && timeDelta < 91*time.Minute {
 			return scheduleId, nil
 		}
 	}
-
 	if scheduleId == -1 {
 		return -1, fmt.Errorf("%s: %v", op, errors.New("could not scan to scheduleId or the table is empty"))
 	}
@@ -96,7 +113,7 @@ func (s *Storage) getScheduleIDByStudentID(studentID string, currentTime time.Ti
 func (s *Storage) getRoomByScheduleID(scheduleID int) (int, string, error) {
 	const op = "storage.sqlite.getRoomByScheduleID"
 
-	query, err := readQueryFromFile(qfGetRoomCodeByScheduleId)
+	query, err := readQueryFromFile(qfGetRoomBySchedId)
 	if err != nil {
 		return -1, "", fmt.Errorf("%s: %v", op, err)
 	}
@@ -119,7 +136,7 @@ func (s *Storage) getRoomByScheduleID(scheduleID int) (int, string, error) {
 	return auditoriumID, auditoriumQRCode, nil
 }
 
-// DOING
+// DONE
 func (s *Storage) getConfirmationCodes(scheduleID int, currentTime time.Time) (string, string, error) {
 	op := "storage.sqlite.getConfirmationCodes"
 
@@ -144,8 +161,9 @@ func (s *Storage) getConfirmationCodes(scheduleID int, currentTime time.Time) (s
 	defer rows.Close()
 
 	type QRCode struct {
-		Id   int
-		Code string
+		Id     int
+		Code   string
+		IsUsed int
 	}
 
 	confirmationQRCodes := make([]QRCode, 0, 9)
@@ -155,6 +173,7 @@ func (s *Storage) getConfirmationCodes(scheduleID int, currentTime time.Time) (s
 		if err := rows.Scan(
 			&qr.Id,
 			&qr.Code,
+			&qr.IsUsed,
 		); err != nil {
 			log.Println(fmt.Errorf("%s: %v", op, err))
 		}
@@ -162,8 +181,21 @@ func (s *Storage) getConfirmationCodes(scheduleID int, currentTime time.Time) (s
 	}
 
 	// need to check if qrcode is used and return one that not
+	// DONE
 
-	return firstCode, secondCode, nil
+	// sorting by ascending order
+	sort.Slice(confirmationQRCodes, func(i, j int) bool {
+		return confirmationQRCodes[i].IsUsed < confirmationQRCodes[j].IsUsed
+	})
+
+	for _, qrCode := range confirmationQRCodes {
+		if qrCode.IsUsed == 0 {
+			secondCode = qrCode.Code
+			return firstCode, secondCode, nil
+		}
+	}
+
+	return "", "", storage.ErrQRExpired
 }
 
 // DONE

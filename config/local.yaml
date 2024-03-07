@@ -1,0 +1,10 @@
+env: "local" # dev, prod
+storage:
+  user: "postgres"
+  password: "postgres"
+  host: "localhost"
+  db_name: "elif_grpc"
+token_ttl: 1h
+grpc: 
+  port: 8888
+  timeout: 10h

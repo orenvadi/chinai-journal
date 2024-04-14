@@ -1,0 +1,8 @@
+REMOVE TABLE Attendance;
+REMOVE TABLE Group;
+REMOVE TABLE Location;
+REMOVE TABLE QrCode;
+REMOVE TABLE Schedule;
+REMOVE TABLE Student;
+REMOVE TABLE Subject;
+REMOVE TABLE Teacher;

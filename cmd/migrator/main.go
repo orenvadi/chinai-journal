@@ -1,54 +1,111 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
+	"os"
 
-	// Библиотека для миграций
-	"github.com/golang-migrate/migrate/v4"
-	// Драйвер для выполнения миграций PostgreSQL
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	// Драйвер для получения миграций из файлов
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/surrealdb/surrealdb.go"
+)
+
+type migrationResult struct {
+	Result string      `json:"result"`
+	Status interface{} `json:"status,omitempty"`
+	Time   string      `json:"time"`
+}
+
+// for Args
+var (
+	storageUser        string
+	storagePassword    string
+	storageHost        string
+	storageDbName      string
+	storageDbNameSpace string
+	migrationsPath     string
 )
 
 func main() {
-	var (
-		storageDSN      string
-		migrationsPath  string
-		migrationsTable string
-	)
+	// parsing cli args
 
-	flag.StringVar(&storageDSN, "storage-dsn", "", "PostgreSQL DSN")
-	flag.StringVar(&migrationsPath, "migrations-path", "", "path to migrations")
-	flag.StringVar(&migrationsTable, "migrations-table", "migrations", "name of migrations table")
-	flag.Parse()
+	parseArgs()
 
-	if storageDSN == "" {
-		panic("storage-dsn is required")
+	// opening and closing surrealdb connection
+	db, err := surrealdb.New(storageHost)
+	if err != nil {
+		panic(err)
 	}
-	if migrationsPath == "" {
-		panic("migrations-path is required")
+	defer db.Close()
+
+	// sign in to db
+	if _, err = db.Signin(map[string]interface{}{
+		"user": storageUser, "pass": storagePassword,
+	}); err != nil {
+		panic(err)
 	}
 
-	m, err := migrate.New(
-		"file://"+migrationsPath,
-		fmt.Sprintf("postgres://%s?x-migrations-table=%s&sslmode=disable", storageDSN, migrationsTable),
-	)
+	if _, err = db.Use(storageDbNameSpace, storageDbName); err != nil {
+		panic(err)
+	}
+
+	// get schema from file
+	schema, err := readFileAll(migrationsPath)
 	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println(migrationsTable)
-	if err := m.Up(); err != nil {
-		if errors.Is(err, migrate.ErrNoChange) {
-			fmt.Println("no migrations to apply")
-			return
-		}
+	// run schema
 
+	rawResult, err := db.Query(schema, map[string]interface{}{})
+	if err != nil {
 		panic(err)
 	}
 
-	fmt.Println("migrations applied")
+	// unmarshall result
+
+	result := make([]migrationResult, 60)
+
+	if err = surrealdb.Unmarshal(rawResult, &result); err != nil {
+		panic(err)
+	}
+
+	// print result
+
+	for i, res := range result {
+		fmt.Println(i, res.Status)
+	}
+}
+
+func parseArgs() {
+	flag.StringVar(&storageUser, "user", "root", "Surrealdb user")
+	flag.StringVar(&storagePassword, "pass", "root", "Surrealdb user")
+	flag.StringVar(&storageHost, "host", "", "Surrealdb host")
+	flag.StringVar(&storageDbName, "dbname", "", "Surrealdb name")
+	flag.StringVar(&storageDbNameSpace, "dbnamespace", "", "Surrealdb namespace")
+
+	flag.StringVar(&migrationsPath, "migr-path", "", "path to migrations")
+	flag.Parse()
+
+	switch {
+	case storageUser == "":
+		panic("user is required")
+	case storagePassword == "":
+		panic("pass is required")
+	case storageHost == "":
+		panic("host is required")
+	case storageDbName == "":
+		panic("name is required")
+	case storageDbNameSpace == "":
+		panic("namespace is required")
+
+	case migrationsPath == "":
+		panic("migr-path is required")
+	}
+}
+
+func readFileAll(filePath string) (string, error) {
+	data, err := os.ReadFile(filePath)
+	if err != nil {
+		return "", err
+	}
+	return string(data), nil
 }

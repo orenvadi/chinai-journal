@@ -7,11 +7,11 @@ require (
 	github.com/bufbuild/protovalidate-go v0.5.2
 	github.com/fatih/color v1.16.0
 	github.com/golang-jwt/jwt/v5 v5.2.0
-	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/jackc/pgx/v4 v4.18.1
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/mattn/go-sqlite3 v1.14.22
 	github.com/spf13/viper v1.18.2
+	github.com/surrealdb/surrealdb.go v0.2.1
 	golang.org/x/crypto v0.17.0
 	google.golang.org/grpc v1.61.1
 	google.golang.org/protobuf v1.32.0
@@ -22,8 +22,7 @@ require (
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/cel-go v0.19.0 // indirect
-	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/go-multierror v1.1.1 // indirect
+	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.0 // indirect

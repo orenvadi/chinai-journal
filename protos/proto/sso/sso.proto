@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package auth;
 
-
 // option go_package = "orenvadi.sso.v1;ssov1";
 
 import "buf/validate/validate.proto";
@@ -11,122 +10,245 @@ import "google/protobuf/timestamp.proto";
 
 // Auth is service for managing permissions and roles.
 service Auth {
-  // Register registers a new user.
-  rpc Register (RegisterRequest) returns (RegisterResponse);
-  // Login logs in a user and returns an auth token.
-  rpc Login (LoginRequest) returns (LoginResponse);
+  //
+  //------------------------------------------------------------//
+  //                     REFACTOR OLD ONES                      //
+  //------------------------------------------------------------//
+  //
+  rpc RegisterTeacher(RegisterTeacherRequest) returns (RegisterTeacherResponse); //
+  rpc RegisterStudent(RegisterStudentRequest) returns (RegisterStudentResponse);
 
-  rpc UpdateUser (UpdateUserRequest) returns (UpdateUserResponse);
+  rpc LoginTeacher(LoginTeacherRequest) returns (LoginTeacherResponse);
+  rpc LoginStudent(LoginStudentRequest) returns (LoginStudentResponse);
 
-  rpc ConfirmUserEmail (ConfirmUserEmailRequest) returns (ConfirmUserEmailResponse);
+  rpc UpdateTeacherInfo(UpdateTeacherInfoRequest) returns (UpdateTeacherInfoResponse);
+  rpc UpdateStudentInfo(UpdateStudentInfoRequest) returns (UpdateStudentInfoResponse);
 
-  // IsAdmin checks whether a user is an admin.
-  rpc IsAdmin (IsAdminRequest) returns (IsAdminResponse);
-  rpc Logout (LogoutRequest) returns (LogoutResponse);
+  rpc LogoutTeacher(LogoutTeacherRequest) returns (LogoutTeacherResponse);
+  rpc LogoutStudent(LogoutStudentRequest) returns (LogoutStudentResponse);
 
-  rpc GetUserData (GetUserDataRequest) returns (GetUserDataResponse);
+  rpc GetTeacherProfileData(google.protobuf.Empty) returns (GetTeacherProfileDataResponse);
+  rpc GetStudentProfileData(google.protobuf.Empty) returns (GetStudentProfileDataResponse);
 
-  rpc SendCodeToResetPassword (SendCodeToResetPasswordRequest) returns (SendCodeToResetPasswordResponse);
+  //
+  //------------------------------------------------------------//
+  //                           NEW RPCs                         //
+  //------------------------------------------------------------//
+  //
 
-  rpc SetNewPassword(SetNewPasswordRequest) returns (SetNewPasswordResponse);
+  // ----------------TEACHERS
+
+  // at the end of lesson
+  // done done
+  rpc GetConfirmCode(google.protobuf.Empty) returns (stream GetConfirmCodeResponse);
+
+  // done done
+  rpc GetAttendanceJournal(GetAttendanceJournalRequest) returns (GetAttendanceJournalResponse);
+
+  // ----------------STUDENTS
+  // both at the start and the end of lesson
+  // done done
+  rpc SubmitCode(SubmitCodeRequest) returns (SubmitCodeResponse);
+
+  // done done
+  rpc GetAttendanceLessons(GetAttendanceLessonsRequest) returns (GetAttendanceLessonsResponse);
 }
 
-message IsAdminRequest {
-  int64 user_id = 1; // User ID to validate.
+//-- -- --
+//---
+// rpc RegisterTeacher(RegisterTeacherRequest) returns (RegisterTeacherResponse); //
+//--
+message RegisterTeacherRequest {
+  string first_name = 1 [(buf.validate.field).string.min_len = 1]; // First name of the user to register.
+  string last_name = 2 [(buf.validate.field).string.min_len = 1]; // Last name of the user to register.
+  string patronimic = 3 [(buf.validate.field).string.min_len = 1]; // Last name of the user to register.
+  string teacher_login = 4 [(buf.validate.field).string.min_len = 3]; // Last name of the user to register.
+  string email = 5 [(buf.validate.field).string.email = true]; // Email of the user to register.
+  string password = 6 [(buf.validate.field).string.min_len = 6]; // Password of the user to register.
 }
 
-message IsAdminResponse {
-  bool is_admin = 1;  // Indicates whether the user is an admin.
-}
-
-message RegisterRequest {
-  string first_name = 1    [(buf.validate.field).string.min_len=1]; // First name of the user to register. 
-  string last_name = 2     [(buf.validate.field).string.min_len=1]; // Last name of the user to register. 
-  string phone_number = 3  [(buf.validate.field).string.min_len=5]; // Last name of the user to register. 
-  string email = 4         [(buf.validate.field).string.email = true]; // Email of the user to register.
-  string password = 5      [(buf.validate.field).string.min_len=6]; // Password of the user to register.
-  int64 app_id = 6;
-}
-
-message RegisterResponse {
-  int64 user_id = 1; // User ID of the registered user.
+message RegisterTeacherResponse {
+  string teacher_id = 1; // User ID of the registered user.
   string access_token = 2; // Auth access token of the logged in user.
-  string refresh_token = 3; // Refresh token to refresh expired access token 
+  string refresh_token = 3; // Refresh token to refresh expired access token
 }
 
-message LoginRequest {
-  string email = 1     [(buf.validate.field).string.email = true]; // Email of the user to login.
-  string password = 2  [(buf.validate.field).string.min_len=6];// Password of the user to login.
-  int64 app_id = 3; // ID of the app to login to.
+//-- -- --
+//---
+// rpc RegisterStudent(RegisterStudentRequest) returns (RegisterStudentResponse);
+//--
+message RegisterStudentRequest {
+  string first_name = 1 [(buf.validate.field).string.min_len = 1]; // First name of the user to register.
+  string last_name = 2 [(buf.validate.field).string.min_len = 1]; // Last name of the user to register.
+  string patronimic = 3 [(buf.validate.field).string.min_len = 1]; // Last name of the user to register.
+  string student_login = 4 [(buf.validate.field).string.min_len = 3]; // Last name of the user to register.
+  string email = 5 [(buf.validate.field).string.email = true]; // Email of the user to register.
+  string password = 6 [(buf.validate.field).string.min_len = 6]; // Password of the user to register.
 }
 
-message LoginResponse {
+message RegisterStudentResponse {
+  string student_id = 1; // User ID of the registered user.
+  string access_token = 2; // Auth access token of the logged in user.
+  string refresh_token = 3; // Refresh token to refresh expired access token
+}
+
+//-- -- --
+//---
+// rpc LoginTeacher(LoginTeacherRequest) returns (LoginTeacherResponse);
+//--
+message LoginTeacherRequest {
+  string teacher_login = 1 [(buf.validate.field).string.min_len = 3]; // Email of the user to login.
+  string password = 2 [(buf.validate.field).string.min_len = 6]; // Password of the user to login.
+}
+
+message LoginTeacherResponse {
   string access_token = 1; // Auth access token of the logged in user.
 }
 
-message LogoutRequest {
-  string token = 1; // Auth token of the user to logout.
-  int64 app_id = 2;
+//-- -- --
+//---
+// rpc LoginStudent(LoginStudentRequest) returns (LoginStudentResponse);
+//--
+message LoginStudentRequest {
+  string student_login = 1 [(buf.validate.field).string.min_len = 3]; // Email of the user to login.
+  string password = 2 [(buf.validate.field).string.min_len = 6]; // Password of the user to login.
 }
 
-message LogoutResponse {
+message LoginStudentResponse {
+  string access_token = 1; // Auth access token of the logged in user.
+}
+
+//-- -- --
+//---
+// rpc UpdateTeacherInfo(UpdateTeacherInfoRequest) returns (UpdateTeacherInfoResponse);
+//--
+message UpdateTeacherInfoRequest {
+  string teacher_login = 1 [(buf.validate.field).string.min_len = 3]; // Last name of the user to register.
+  string email = 2 [(buf.validate.field).string.email = true]; // Email of the user to register.
+}
+
+message UpdateTeacherInfoResponse {
+  bool success = 1;
+}
+
+//-- -- --
+//---
+// rpc UpdateStudentInfo(UpdateStudentInfoRequest) returns (UpdateStudentInfoResponse);
+//--
+message UpdateStudentInfoRequest {
+  string email = 2 [(buf.validate.field).string.email = true]; // Email of the user to register.
+}
+message UpdateStudentInfoResponse {
+  bool success = 1;
+}
+
+//-- -- --
+//---
+// rpc LogoutTeacher(LogoutTeacherRequest) returns (LogoutTeacherResponse);
+//--
+message LogoutTeacherRequest {
+  string token = 1; // Auth token of the user to logout.
+}
+
+message LogoutTeacherResponse {
   bool success = 1; // Indicates whether the logout was successful.
 }
 
-message UpdateUserRequest {
-  string first_name = 1; // Updated first name of the user.
-  string last_name = 2; // Updated last name of the user.
-  string phone_number = 3; // Updated phone number of the user.
-  string email = 4; // Updated email of the user.
-  int64 app_id = 5;
+//-- -- --
+//---
+// rpc LogoutStudent(LogoutStudentRequest) returns (LogoutStudentResponse);
+//--
+message LogoutStudentRequest {
+  string token = 1; // Auth token of the user to logout.
 }
 
-message UpdateUserResponse {
-  bool success = 1; // Indicates whether the update was successful.
+message LogoutStudentResponse {
+  bool success = 1; // Indicates whether the logout was successful.
 }
 
-
-message ConfirmUserEmailRequest{
-  string confirm_code = 1       [(buf.validate.field).string.len=6];
-  int64 app_id = 2;
+//-- -- --
+//---
+// rpc GetTeacherProfileData(google.protobuf.Empty) returns (GetTeacherProfileDataResponse);
+//--
+message GetTeacherProfileDataResponse {
+  string first_name = 1;
+  string last_name = 2;
+  string patronimic = 3;
+  string teacher_login = 4;
+  string email = 5;
 }
 
-message ConfirmUserEmailResponse{
-  bool success = 1; // Indicates whether the confirm was successful.
+//-- -- --
+//---
+// rpc GetStudentProfileData(google.protobuf.Empty) returns (GetStudentProfileDataResponse);
+
+message GetStudentProfileDataResponse {
+  string first_name = 1;
+  string last_name = 2;
+  string patronimic = 3;
+  string teacher_login = 4;
+  string email = 5;
 }
 
+//-- -- --
+//---
+// rpc GetConfirmCode(google.protobuf.Empty) returns (stream GetConfirmCodeResponse);
+//--
 
-message GetUserDataRequest{
-  int64 app_id = 1;
+message GetConfirmCodeResponse {
+  string code = 1;
 }
 
-message GetUserDataResponse{
-  int64 id = 1;
-  string first_name = 2;
-  string last_name = 3;
-  string phone_number = 4;
-  google.protobuf.Timestamp created_at = 5;
-  google.protobuf.Timestamp updated_at = 6;
-  string email = 7;
+//-- -- --
+//---
+// rpc GetAttendanceJournal(GetAttendanceJournalRequest) returns (GetAttendanceJournalResponse);
+//--
+
+message GetAttendanceJournalRequest {
+  string lesson_id = 1;
 }
 
+message GetAttendanceJournalResponse {
+  message AttendanceJournalLine {
+    int32 number = 1;
+    string student_name = 2;
+    bool is_attended = 3;
+  }
 
-message SendCodeToResetPasswordRequest{
-  string email = 1      [(buf.validate.field).string.email = true];
+  google.protobuf.Timestamp time_slot = 1;
+  string group = 2;
+  repeated AttendanceJournalLine attendanceJournalLine = 3;
 }
 
-message SendCodeToResetPasswordResponse{
+//-- -- --
+//---
+// rpc SubmitCode(SubmitCodeRequest) returns (SubmitCodeResponse);
+//--
+
+message SubmitCodeRequest {
+  string code = 1;
+}
+
+message SubmitCodeResponse {
   bool success = 1;
 }
 
+//-- -- --
+//---
+// rpc GetAttendanceLessons(GetAttendanceLessonsRequest) returns (GetAttendanceLessonsResponse);
+//--
 
-message SetNewPasswordRequest{
-  string confirm_code = 1       [(buf.validate.field).string.len=6];
-  string email = 2              [(buf.validate.field).string.email = true];
-  string new_password = 3       [(buf.validate.field).string.min_len=6];
+message GetAttendanceLessonsRequest {
+  google.protobuf.Timestamp date = 1;
 }
 
+message GetAttendanceLessonsResponse {
+  message AttendanceLessonsLine {
+    google.protobuf.Timestamp time_slot = 1;
+    string group = 2;
+    bool is_attended = 3;
+  }
 
-message SetNewPasswordResponse{
-  bool success = 1;
+  google.protobuf.Timestamp date = 1;
+  repeated AttendanceLessonsLine attendanceLessonsLine = 2;
 }

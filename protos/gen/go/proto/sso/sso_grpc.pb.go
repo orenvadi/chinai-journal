@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -22,18 +23,32 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthClient interface {
-	// Register registers a new user.
-	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
-	// Login logs in a user and returns an auth token.
-	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
-	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error)
-	ConfirmUserEmail(ctx context.Context, in *ConfirmUserEmailRequest, opts ...grpc.CallOption) (*ConfirmUserEmailResponse, error)
-	// IsAdmin checks whether a user is an admin.
-	IsAdmin(ctx context.Context, in *IsAdminRequest, opts ...grpc.CallOption) (*IsAdminResponse, error)
-	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
-	GetUserData(ctx context.Context, in *GetUserDataRequest, opts ...grpc.CallOption) (*GetUserDataResponse, error)
-	SendCodeToResetPassword(ctx context.Context, in *SendCodeToResetPasswordRequest, opts ...grpc.CallOption) (*SendCodeToResetPasswordResponse, error)
-	SetNewPassword(ctx context.Context, in *SetNewPasswordRequest, opts ...grpc.CallOption) (*SetNewPasswordResponse, error)
+	// ------------------------------------------------------------//
+	//
+	//	REFACTOR OLD ONES                      //
+	//
+	// ------------------------------------------------------------//
+	RegisterTeacher(ctx context.Context, in *RegisterTeacherRequest, opts ...grpc.CallOption) (*RegisterTeacherResponse, error)
+	RegisterStudent(ctx context.Context, in *RegisterStudentRequest, opts ...grpc.CallOption) (*RegisterStudentResponse, error)
+	LoginTeacher(ctx context.Context, in *LoginTeacherRequest, opts ...grpc.CallOption) (*LoginTeacherResponse, error)
+	LoginStudent(ctx context.Context, in *LoginStudentRequest, opts ...grpc.CallOption) (*LoginStudentResponse, error)
+	UpdateTeacherInfo(ctx context.Context, in *UpdateTeacherInfoRequest, opts ...grpc.CallOption) (*UpdateTeacherInfoResponse, error)
+	UpdateStudentInfo(ctx context.Context, in *UpdateStudentInfoRequest, opts ...grpc.CallOption) (*UpdateStudentInfoResponse, error)
+	LogoutTeacher(ctx context.Context, in *LogoutTeacherRequest, opts ...grpc.CallOption) (*LogoutTeacherResponse, error)
+	LogoutStudent(ctx context.Context, in *LogoutStudentRequest, opts ...grpc.CallOption) (*LogoutStudentResponse, error)
+	GetTeacherProfileData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTeacherProfileDataResponse, error)
+	GetStudentProfileData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStudentProfileDataResponse, error)
+	// at the end of lesson
+	// done done
+	GetConfirmCode(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Auth_GetConfirmCodeClient, error)
+	// done done
+	GetAttendanceJournal(ctx context.Context, in *GetAttendanceJournalRequest, opts ...grpc.CallOption) (*GetAttendanceJournalResponse, error)
+	// ----------------STUDENTS
+	// both at the start and the end of lesson
+	// done done
+	SubmitCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error)
+	// done done
+	GetAttendanceLessons(ctx context.Context, in *GetAttendanceLessonsRequest, opts ...grpc.CallOption) (*GetAttendanceLessonsResponse, error)
 }
 
 type authClient struct {
@@ -44,81 +59,149 @@ func NewAuthClient(cc grpc.ClientConnInterface) AuthClient {
 	return &authClient{cc}
 }
 
-func (c *authClient) Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error) {
-	out := new(RegisterResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/Register", in, out, opts...)
+func (c *authClient) RegisterTeacher(ctx context.Context, in *RegisterTeacherRequest, opts ...grpc.CallOption) (*RegisterTeacherResponse, error) {
+	out := new(RegisterTeacherResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/RegisterTeacher", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authClient) Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error) {
-	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/Login", in, out, opts...)
+func (c *authClient) RegisterStudent(ctx context.Context, in *RegisterStudentRequest, opts ...grpc.CallOption) (*RegisterStudentResponse, error) {
+	out := new(RegisterStudentResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/RegisterStudent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authClient) UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*UpdateUserResponse, error) {
-	out := new(UpdateUserResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/UpdateUser", in, out, opts...)
+func (c *authClient) LoginTeacher(ctx context.Context, in *LoginTeacherRequest, opts ...grpc.CallOption) (*LoginTeacherResponse, error) {
+	out := new(LoginTeacherResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/LoginTeacher", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authClient) ConfirmUserEmail(ctx context.Context, in *ConfirmUserEmailRequest, opts ...grpc.CallOption) (*ConfirmUserEmailResponse, error) {
-	out := new(ConfirmUserEmailResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/ConfirmUserEmail", in, out, opts...)
+func (c *authClient) LoginStudent(ctx context.Context, in *LoginStudentRequest, opts ...grpc.CallOption) (*LoginStudentResponse, error) {
+	out := new(LoginStudentResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/LoginStudent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authClient) IsAdmin(ctx context.Context, in *IsAdminRequest, opts ...grpc.CallOption) (*IsAdminResponse, error) {
-	out := new(IsAdminResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/IsAdmin", in, out, opts...)
+func (c *authClient) UpdateTeacherInfo(ctx context.Context, in *UpdateTeacherInfoRequest, opts ...grpc.CallOption) (*UpdateTeacherInfoResponse, error) {
+	out := new(UpdateTeacherInfoResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/UpdateTeacherInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authClient) Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error) {
-	out := new(LogoutResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/Logout", in, out, opts...)
+func (c *authClient) UpdateStudentInfo(ctx context.Context, in *UpdateStudentInfoRequest, opts ...grpc.CallOption) (*UpdateStudentInfoResponse, error) {
+	out := new(UpdateStudentInfoResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/UpdateStudentInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authClient) GetUserData(ctx context.Context, in *GetUserDataRequest, opts ...grpc.CallOption) (*GetUserDataResponse, error) {
-	out := new(GetUserDataResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/GetUserData", in, out, opts...)
+func (c *authClient) LogoutTeacher(ctx context.Context, in *LogoutTeacherRequest, opts ...grpc.CallOption) (*LogoutTeacherResponse, error) {
+	out := new(LogoutTeacherResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/LogoutTeacher", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authClient) SendCodeToResetPassword(ctx context.Context, in *SendCodeToResetPasswordRequest, opts ...grpc.CallOption) (*SendCodeToResetPasswordResponse, error) {
-	out := new(SendCodeToResetPasswordResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/SendCodeToResetPassword", in, out, opts...)
+func (c *authClient) LogoutStudent(ctx context.Context, in *LogoutStudentRequest, opts ...grpc.CallOption) (*LogoutStudentResponse, error) {
+	out := new(LogoutStudentResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/LogoutStudent", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *authClient) SetNewPassword(ctx context.Context, in *SetNewPasswordRequest, opts ...grpc.CallOption) (*SetNewPasswordResponse, error) {
-	out := new(SetNewPasswordResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/SetNewPassword", in, out, opts...)
+func (c *authClient) GetTeacherProfileData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTeacherProfileDataResponse, error) {
+	out := new(GetTeacherProfileDataResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/GetTeacherProfileData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) GetStudentProfileData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStudentProfileDataResponse, error) {
+	out := new(GetStudentProfileDataResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/GetStudentProfileData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) GetConfirmCode(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Auth_GetConfirmCodeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Auth_ServiceDesc.Streams[0], "/auth.Auth/GetConfirmCode", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &authGetConfirmCodeClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Auth_GetConfirmCodeClient interface {
+	Recv() (*GetConfirmCodeResponse, error)
+	grpc.ClientStream
+}
+
+type authGetConfirmCodeClient struct {
+	grpc.ClientStream
+}
+
+func (x *authGetConfirmCodeClient) Recv() (*GetConfirmCodeResponse, error) {
+	m := new(GetConfirmCodeResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *authClient) GetAttendanceJournal(ctx context.Context, in *GetAttendanceJournalRequest, opts ...grpc.CallOption) (*GetAttendanceJournalResponse, error) {
+	out := new(GetAttendanceJournalResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/GetAttendanceJournal", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) SubmitCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error) {
+	out := new(SubmitCodeResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/SubmitCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) GetAttendanceLessons(ctx context.Context, in *GetAttendanceLessonsRequest, opts ...grpc.CallOption) (*GetAttendanceLessonsResponse, error) {
+	out := new(GetAttendanceLessonsResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/GetAttendanceLessons", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -129,18 +212,32 @@ func (c *authClient) SetNewPassword(ctx context.Context, in *SetNewPasswordReque
 // All implementations must embed UnimplementedAuthServer
 // for forward compatibility
 type AuthServer interface {
-	// Register registers a new user.
-	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
-	// Login logs in a user and returns an auth token.
-	Login(context.Context, *LoginRequest) (*LoginResponse, error)
-	UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error)
-	ConfirmUserEmail(context.Context, *ConfirmUserEmailRequest) (*ConfirmUserEmailResponse, error)
-	// IsAdmin checks whether a user is an admin.
-	IsAdmin(context.Context, *IsAdminRequest) (*IsAdminResponse, error)
-	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)
-	GetUserData(context.Context, *GetUserDataRequest) (*GetUserDataResponse, error)
-	SendCodeToResetPassword(context.Context, *SendCodeToResetPasswordRequest) (*SendCodeToResetPasswordResponse, error)
-	SetNewPassword(context.Context, *SetNewPasswordRequest) (*SetNewPasswordResponse, error)
+	// ------------------------------------------------------------//
+	//
+	//	REFACTOR OLD ONES                      //
+	//
+	// ------------------------------------------------------------//
+	RegisterTeacher(context.Context, *RegisterTeacherRequest) (*RegisterTeacherResponse, error)
+	RegisterStudent(context.Context, *RegisterStudentRequest) (*RegisterStudentResponse, error)
+	LoginTeacher(context.Context, *LoginTeacherRequest) (*LoginTeacherResponse, error)
+	LoginStudent(context.Context, *LoginStudentRequest) (*LoginStudentResponse, error)
+	UpdateTeacherInfo(context.Context, *UpdateTeacherInfoRequest) (*UpdateTeacherInfoResponse, error)
+	UpdateStudentInfo(context.Context, *UpdateStudentInfoRequest) (*UpdateStudentInfoResponse, error)
+	LogoutTeacher(context.Context, *LogoutTeacherRequest) (*LogoutTeacherResponse, error)
+	LogoutStudent(context.Context, *LogoutStudentRequest) (*LogoutStudentResponse, error)
+	GetTeacherProfileData(context.Context, *emptypb.Empty) (*GetTeacherProfileDataResponse, error)
+	GetStudentProfileData(context.Context, *emptypb.Empty) (*GetStudentProfileDataResponse, error)
+	// at the end of lesson
+	// done done
+	GetConfirmCode(*emptypb.Empty, Auth_GetConfirmCodeServer) error
+	// done done
+	GetAttendanceJournal(context.Context, *GetAttendanceJournalRequest) (*GetAttendanceJournalResponse, error)
+	// ----------------STUDENTS
+	// both at the start and the end of lesson
+	// done done
+	SubmitCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error)
+	// done done
+	GetAttendanceLessons(context.Context, *GetAttendanceLessonsRequest) (*GetAttendanceLessonsResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
 
@@ -148,32 +245,47 @@ type AuthServer interface {
 type UnimplementedAuthServer struct {
 }
 
-func (UnimplementedAuthServer) Register(context.Context, *RegisterRequest) (*RegisterResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
+func (UnimplementedAuthServer) RegisterTeacher(context.Context, *RegisterTeacherRequest) (*RegisterTeacherResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterTeacher not implemented")
 }
-func (UnimplementedAuthServer) Login(context.Context, *LoginRequest) (*LoginResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
+func (UnimplementedAuthServer) RegisterStudent(context.Context, *RegisterStudentRequest) (*RegisterStudentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RegisterStudent not implemented")
 }
-func (UnimplementedAuthServer) UpdateUser(context.Context, *UpdateUserRequest) (*UpdateUserResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUser not implemented")
+func (UnimplementedAuthServer) LoginTeacher(context.Context, *LoginTeacherRequest) (*LoginTeacherResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginTeacher not implemented")
 }
-func (UnimplementedAuthServer) ConfirmUserEmail(context.Context, *ConfirmUserEmailRequest) (*ConfirmUserEmailResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfirmUserEmail not implemented")
+func (UnimplementedAuthServer) LoginStudent(context.Context, *LoginStudentRequest) (*LoginStudentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginStudent not implemented")
 }
-func (UnimplementedAuthServer) IsAdmin(context.Context, *IsAdminRequest) (*IsAdminResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method IsAdmin not implemented")
+func (UnimplementedAuthServer) UpdateTeacherInfo(context.Context, *UpdateTeacherInfoRequest) (*UpdateTeacherInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeacherInfo not implemented")
 }
-func (UnimplementedAuthServer) Logout(context.Context, *LogoutRequest) (*LogoutResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Logout not implemented")
+func (UnimplementedAuthServer) UpdateStudentInfo(context.Context, *UpdateStudentInfoRequest) (*UpdateStudentInfoResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateStudentInfo not implemented")
 }
-func (UnimplementedAuthServer) GetUserData(context.Context, *GetUserDataRequest) (*GetUserDataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserData not implemented")
+func (UnimplementedAuthServer) LogoutTeacher(context.Context, *LogoutTeacherRequest) (*LogoutTeacherResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogoutTeacher not implemented")
 }
-func (UnimplementedAuthServer) SendCodeToResetPassword(context.Context, *SendCodeToResetPasswordRequest) (*SendCodeToResetPasswordResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SendCodeToResetPassword not implemented")
+func (UnimplementedAuthServer) LogoutStudent(context.Context, *LogoutStudentRequest) (*LogoutStudentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LogoutStudent not implemented")
 }
-func (UnimplementedAuthServer) SetNewPassword(context.Context, *SetNewPasswordRequest) (*SetNewPasswordResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetNewPassword not implemented")
+func (UnimplementedAuthServer) GetTeacherProfileData(context.Context, *emptypb.Empty) (*GetTeacherProfileDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTeacherProfileData not implemented")
+}
+func (UnimplementedAuthServer) GetStudentProfileData(context.Context, *emptypb.Empty) (*GetStudentProfileDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetStudentProfileData not implemented")
+}
+func (UnimplementedAuthServer) GetConfirmCode(*emptypb.Empty, Auth_GetConfirmCodeServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetConfirmCode not implemented")
+}
+func (UnimplementedAuthServer) GetAttendanceJournal(context.Context, *GetAttendanceJournalRequest) (*GetAttendanceJournalResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAttendanceJournal not implemented")
+}
+func (UnimplementedAuthServer) SubmitCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitCode not implemented")
+}
+func (UnimplementedAuthServer) GetAttendanceLessons(context.Context, *GetAttendanceLessonsRequest) (*GetAttendanceLessonsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAttendanceLessons not implemented")
 }
 func (UnimplementedAuthServer) mustEmbedUnimplementedAuthServer() {}
 
@@ -188,164 +300,257 @@ func RegisterAuthServer(s grpc.ServiceRegistrar, srv AuthServer) {
 	s.RegisterService(&Auth_ServiceDesc, srv)
 }
 
-func _Auth_Register_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RegisterRequest)
+func _Auth_RegisterTeacher_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterTeacherRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).Register(ctx, in)
+		return srv.(AuthServer).RegisterTeacher(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/Register",
+		FullMethod: "/auth.Auth/RegisterTeacher",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).Register(ctx, req.(*RegisterRequest))
+		return srv.(AuthServer).RegisterTeacher(ctx, req.(*RegisterTeacherRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_Login_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LoginRequest)
+func _Auth_RegisterStudent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RegisterStudentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).Login(ctx, in)
+		return srv.(AuthServer).RegisterStudent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/Login",
+		FullMethod: "/auth.Auth/RegisterStudent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).Login(ctx, req.(*LoginRequest))
+		return srv.(AuthServer).RegisterStudent(ctx, req.(*RegisterStudentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_UpdateUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUserRequest)
+func _Auth_LoginTeacher_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginTeacherRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).UpdateUser(ctx, in)
+		return srv.(AuthServer).LoginTeacher(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/UpdateUser",
+		FullMethod: "/auth.Auth/LoginTeacher",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).UpdateUser(ctx, req.(*UpdateUserRequest))
+		return srv.(AuthServer).LoginTeacher(ctx, req.(*LoginTeacherRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_ConfirmUserEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConfirmUserEmailRequest)
+func _Auth_LoginStudent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LoginStudentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).ConfirmUserEmail(ctx, in)
+		return srv.(AuthServer).LoginStudent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/ConfirmUserEmail",
+		FullMethod: "/auth.Auth/LoginStudent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).ConfirmUserEmail(ctx, req.(*ConfirmUserEmailRequest))
+		return srv.(AuthServer).LoginStudent(ctx, req.(*LoginStudentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_IsAdmin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(IsAdminRequest)
+func _Auth_UpdateTeacherInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTeacherInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).IsAdmin(ctx, in)
+		return srv.(AuthServer).UpdateTeacherInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/IsAdmin",
+		FullMethod: "/auth.Auth/UpdateTeacherInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).IsAdmin(ctx, req.(*IsAdminRequest))
+		return srv.(AuthServer).UpdateTeacherInfo(ctx, req.(*UpdateTeacherInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_Logout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(LogoutRequest)
+func _Auth_UpdateStudentInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateStudentInfoRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).Logout(ctx, in)
+		return srv.(AuthServer).UpdateStudentInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/Logout",
+		FullMethod: "/auth.Auth/UpdateStudentInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).Logout(ctx, req.(*LogoutRequest))
+		return srv.(AuthServer).UpdateStudentInfo(ctx, req.(*UpdateStudentInfoRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_GetUserData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserDataRequest)
+func _Auth_LogoutTeacher_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutTeacherRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).GetUserData(ctx, in)
+		return srv.(AuthServer).LogoutTeacher(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/GetUserData",
+		FullMethod: "/auth.Auth/LogoutTeacher",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).GetUserData(ctx, req.(*GetUserDataRequest))
+		return srv.(AuthServer).LogoutTeacher(ctx, req.(*LogoutTeacherRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_SendCodeToResetPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SendCodeToResetPasswordRequest)
+func _Auth_LogoutStudent_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LogoutStudentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).SendCodeToResetPassword(ctx, in)
+		return srv.(AuthServer).LogoutStudent(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/SendCodeToResetPassword",
+		FullMethod: "/auth.Auth/LogoutStudent",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).SendCodeToResetPassword(ctx, req.(*SendCodeToResetPasswordRequest))
+		return srv.(AuthServer).LogoutStudent(ctx, req.(*LogoutStudentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_SetNewPassword_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetNewPasswordRequest)
+func _Auth_GetTeacherProfileData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).SetNewPassword(ctx, in)
+		return srv.(AuthServer).GetTeacherProfileData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/SetNewPassword",
+		FullMethod: "/auth.Auth/GetTeacherProfileData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).SetNewPassword(ctx, req.(*SetNewPasswordRequest))
+		return srv.(AuthServer).GetTeacherProfileData(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_GetStudentProfileData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetStudentProfileData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.Auth/GetStudentProfileData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetStudentProfileData(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_GetConfirmCode_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(AuthServer).GetConfirmCode(m, &authGetConfirmCodeServer{stream})
+}
+
+type Auth_GetConfirmCodeServer interface {
+	Send(*GetConfirmCodeResponse) error
+	grpc.ServerStream
+}
+
+type authGetConfirmCodeServer struct {
+	grpc.ServerStream
+}
+
+func (x *authGetConfirmCodeServer) Send(m *GetConfirmCodeResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func _Auth_GetAttendanceJournal_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAttendanceJournalRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetAttendanceJournal(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.Auth/GetAttendanceJournal",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetAttendanceJournal(ctx, req.(*GetAttendanceJournalRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_SubmitCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).SubmitCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.Auth/SubmitCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).SubmitCode(ctx, req.(*SubmitCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_GetAttendanceLessons_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAttendanceLessonsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).GetAttendanceLessons(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.Auth/GetAttendanceLessons",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).GetAttendanceLessons(ctx, req.(*GetAttendanceLessonsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -358,42 +563,64 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AuthServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Register",
-			Handler:    _Auth_Register_Handler,
+			MethodName: "RegisterTeacher",
+			Handler:    _Auth_RegisterTeacher_Handler,
 		},
 		{
-			MethodName: "Login",
-			Handler:    _Auth_Login_Handler,
+			MethodName: "RegisterStudent",
+			Handler:    _Auth_RegisterStudent_Handler,
 		},
 		{
-			MethodName: "UpdateUser",
-			Handler:    _Auth_UpdateUser_Handler,
+			MethodName: "LoginTeacher",
+			Handler:    _Auth_LoginTeacher_Handler,
 		},
 		{
-			MethodName: "ConfirmUserEmail",
-			Handler:    _Auth_ConfirmUserEmail_Handler,
+			MethodName: "LoginStudent",
+			Handler:    _Auth_LoginStudent_Handler,
 		},
 		{
-			MethodName: "IsAdmin",
-			Handler:    _Auth_IsAdmin_Handler,
+			MethodName: "UpdateTeacherInfo",
+			Handler:    _Auth_UpdateTeacherInfo_Handler,
 		},
 		{
-			MethodName: "Logout",
-			Handler:    _Auth_Logout_Handler,
+			MethodName: "UpdateStudentInfo",
+			Handler:    _Auth_UpdateStudentInfo_Handler,
 		},
 		{
-			MethodName: "GetUserData",
-			Handler:    _Auth_GetUserData_Handler,
+			MethodName: "LogoutTeacher",
+			Handler:    _Auth_LogoutTeacher_Handler,
 		},
 		{
-			MethodName: "SendCodeToResetPassword",
-			Handler:    _Auth_SendCodeToResetPassword_Handler,
+			MethodName: "LogoutStudent",
+			Handler:    _Auth_LogoutStudent_Handler,
 		},
 		{
-			MethodName: "SetNewPassword",
-			Handler:    _Auth_SetNewPassword_Handler,
+			MethodName: "GetTeacherProfileData",
+			Handler:    _Auth_GetTeacherProfileData_Handler,
+		},
+		{
+			MethodName: "GetStudentProfileData",
+			Handler:    _Auth_GetStudentProfileData_Handler,
+		},
+		{
+			MethodName: "GetAttendanceJournal",
+			Handler:    _Auth_GetAttendanceJournal_Handler,
+		},
+		{
+			MethodName: "SubmitCode",
+			Handler:    _Auth_SubmitCode_Handler,
+		},
+		{
+			MethodName: "GetAttendanceLessons",
+			Handler:    _Auth_GetAttendanceLessons_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetConfirmCode",
+			Handler:       _Auth_GetConfirmCode_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "proto/sso/sso.proto",
 }

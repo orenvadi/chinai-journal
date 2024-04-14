@@ -17,14 +17,13 @@ import (
 )
 
 type Auth struct {
-	log                  *slog.Logger
-	usrSaver             UserSaver
-	usrProvider          UserProvider
-	usrUpdater           UserUpdater
-	appProvider          AppProvider
-	passwordResetter     PasswordResetter
-	emailConfirmProvider EmailConfirmProvider
-	tokenTTL             time.Duration
+	log              *slog.Logger
+	usrSaver         UserSaver
+	usrProvider      UserProvider
+	usrUpdater       UserUpdater
+	appProvider      AppProvider
+	passwordResetter PasswordResetter
+	tokenTTL         time.Duration
 }
 
 type UserSaver interface {
@@ -46,12 +45,6 @@ type AppProvider interface {
 	App(ctx context.Context, appID int64) (models.App, error)
 }
 
-type EmailConfirmProvider interface {
-	SaveConfirmationCode(ctx context.Context, userID int64, code string) error
-	ConfirmationCode(ctx context.Context, userID int64) (confCode models.ConfirmCode, err error)
-	DeleteConfirmationCode(ctx context.Context, user_id int64) error
-}
-
 type PasswordResetter interface {
 	IsEmailConfirmed(ctx context.Context, email string) (bool, error)
 	ChangePassword(ctx context.Context, email string, newPasswordHash []byte) error
@@ -70,19 +63,17 @@ func New(
 	userProvider UserProvider,
 	userUpdater UserUpdater,
 	appProvider AppProvider,
-	emailConfirmProvider EmailConfirmProvider,
 	passwordResetter PasswordResetter,
 	tokenTTL time.Duration,
 ) *Auth {
 	return &Auth{
-		log:                  log,
-		usrSaver:             userSaver,
-		usrProvider:          userProvider,
-		usrUpdater:           userUpdater, // из-за этой херни я  потерял 3 часа
-		appProvider:          appProvider,
-		emailConfirmProvider: emailConfirmProvider,
-		passwordResetter:     passwordResetter,
-		tokenTTL:             tokenTTL,
+		log:              log,
+		usrSaver:         userSaver,
+		usrProvider:      userProvider,
+		usrUpdater:       userUpdater, // из-за этой херни я  потерял 3 часа
+		appProvider:      appProvider,
+		passwordResetter: passwordResetter,
+		tokenTTL:         tokenTTL,
 	}
 }
 

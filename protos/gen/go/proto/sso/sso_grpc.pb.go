@@ -39,15 +39,11 @@ type AuthClient interface {
 	GetTeacherProfileData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTeacherProfileDataResponse, error)
 	GetStudentProfileData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStudentProfileDataResponse, error)
 	// at the end of lesson
-	// done done
 	GetConfirmCode(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Auth_GetConfirmCodeClient, error)
-	// done done
 	GetAttendanceJournal(ctx context.Context, in *GetAttendanceJournalRequest, opts ...grpc.CallOption) (*GetAttendanceJournalResponse, error)
 	// ----------------STUDENTS
 	// both at the start and the end of lesson
-	// done done
 	SubmitCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error)
-	// done done
 	GetAttendanceLessons(ctx context.Context, in *GetAttendanceLessonsRequest, opts ...grpc.CallOption) (*GetAttendanceLessonsResponse, error)
 }
 
@@ -228,15 +224,11 @@ type AuthServer interface {
 	GetTeacherProfileData(context.Context, *emptypb.Empty) (*GetTeacherProfileDataResponse, error)
 	GetStudentProfileData(context.Context, *emptypb.Empty) (*GetStudentProfileDataResponse, error)
 	// at the end of lesson
-	// done done
 	GetConfirmCode(*emptypb.Empty, Auth_GetConfirmCodeServer) error
-	// done done
 	GetAttendanceJournal(context.Context, *GetAttendanceJournalRequest) (*GetAttendanceJournalResponse, error)
 	// ----------------STUDENTS
 	// both at the start and the end of lesson
-	// done done
 	SubmitCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error)
-	// done done
 	GetAttendanceLessons(context.Context, *GetAttendanceLessonsRequest) (*GetAttendanceLessonsResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }

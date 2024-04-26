@@ -1,9 +1,9 @@
-# Elif Digital SSO 
+# INAI attendance journal
 
 
 ## How to run
 
-To run the project you must have a Postgres database, configs are located in config/config.yaml
+To run the project you must have a [SurrealDB](https://surrealdb.com/docs/surrealdb/installation/) database, configs are located in config/config.yaml
 
 **Migrate the database**
 
@@ -67,20 +67,12 @@ so every time you regenerate protos
 
 ## TODO 
 
--[x] Finish update of users
+-[x] Finish MVP
 
--[] Email confirm
+-[] Connect to ebilim through web scraping
 -[] Reset password
 
 -[] Get user data
 -[] Refresh token
-
-
-
-
-
-
-
-
 
 

@@ -10,7 +10,6 @@ import "google/protobuf/timestamp.proto";
 
 // Auth is service for managing permissions and roles.
 service Auth {
-  //
   //------------------------------------------------------------//
   //                     REFACTOR OLD ONES                      //
   //------------------------------------------------------------//
@@ -30,7 +29,6 @@ service Auth {
   rpc GetTeacherProfileData(google.protobuf.Empty) returns (GetTeacherProfileDataResponse);
   rpc GetStudentProfileData(google.protobuf.Empty) returns (GetStudentProfileDataResponse);
 
-  //
   //------------------------------------------------------------//
   //                           NEW RPCs                         //
   //------------------------------------------------------------//
@@ -39,25 +37,19 @@ service Auth {
   // ----------------TEACHERS
 
   // at the end of lesson
-  // done done
   rpc GetConfirmCode(google.protobuf.Empty) returns (stream GetConfirmCodeResponse);
 
-  // done done
   rpc GetAttendanceJournal(GetAttendanceJournalRequest) returns (GetAttendanceJournalResponse);
 
   // ----------------STUDENTS
   // both at the start and the end of lesson
-  // done done
   rpc SubmitCode(SubmitCodeRequest) returns (SubmitCodeResponse);
 
-  // done done
   rpc GetAttendanceLessons(GetAttendanceLessonsRequest) returns (GetAttendanceLessonsResponse);
 }
 
-//-- -- --
 //---
 // rpc RegisterTeacher(RegisterTeacherRequest) returns (RegisterTeacherResponse); //
-//--
 message RegisterTeacherRequest {
   string first_name = 1 [(buf.validate.field).string.min_len = 1]; // First name of the user to register.
   string last_name = 2 [(buf.validate.field).string.min_len = 1]; // Last name of the user to register.
@@ -73,10 +65,8 @@ message RegisterTeacherResponse {
   string refresh_token = 3; // Refresh token to refresh expired access token
 }
 
-//-- -- --
 //---
 // rpc RegisterStudent(RegisterStudentRequest) returns (RegisterStudentResponse);
-//--
 message RegisterStudentRequest {
   string first_name = 1 [(buf.validate.field).string.min_len = 1]; // First name of the user to register.
   string last_name = 2 [(buf.validate.field).string.min_len = 1]; // Last name of the user to register.
@@ -92,10 +82,8 @@ message RegisterStudentResponse {
   string refresh_token = 3; // Refresh token to refresh expired access token
 }
 
-//-- -- --
 //---
 // rpc LoginTeacher(LoginTeacherRequest) returns (LoginTeacherResponse);
-//--
 message LoginTeacherRequest {
   string teacher_login = 1 [(buf.validate.field).string.min_len = 3]; // Email of the user to login.
   string password = 2 [(buf.validate.field).string.min_len = 6]; // Password of the user to login.
@@ -105,10 +93,8 @@ message LoginTeacherResponse {
   string access_token = 1; // Auth access token of the logged in user.
 }
 
-//-- -- --
 //---
 // rpc LoginStudent(LoginStudentRequest) returns (LoginStudentResponse);
-//--
 message LoginStudentRequest {
   string student_login = 1 [(buf.validate.field).string.min_len = 3]; // Email of the user to login.
   string password = 2 [(buf.validate.field).string.min_len = 6]; // Password of the user to login.
@@ -118,12 +104,10 @@ message LoginStudentResponse {
   string access_token = 1; // Auth access token of the logged in user.
 }
 
-//-- -- --
 //---
 // rpc UpdateTeacherInfo(UpdateTeacherInfoRequest) returns (UpdateTeacherInfoResponse);
-//--
 message UpdateTeacherInfoRequest {
-  string teacher_login = 1 [(buf.validate.field).string.min_len = 3]; // Last name of the user to register.
+  string teacher_login = 1 [(buf.validate.field).string.min_len = 3];
   string email = 2 [(buf.validate.field).string.email = true]; // Email of the user to register.
 }
 
@@ -131,21 +115,19 @@ message UpdateTeacherInfoResponse {
   bool success = 1;
 }
 
-//-- -- --
 //---
 // rpc UpdateStudentInfo(UpdateStudentInfoRequest) returns (UpdateStudentInfoResponse);
-//--
 message UpdateStudentInfoRequest {
+  string student_login = 1 [(buf.validate.field).string.min_len = 3];
   string email = 2 [(buf.validate.field).string.email = true]; // Email of the user to register.
 }
+
 message UpdateStudentInfoResponse {
   bool success = 1;
 }
 
-//-- -- --
 //---
 // rpc LogoutTeacher(LogoutTeacherRequest) returns (LogoutTeacherResponse);
-//--
 message LogoutTeacherRequest {
   string token = 1; // Auth token of the user to logout.
 }
@@ -154,10 +136,8 @@ message LogoutTeacherResponse {
   bool success = 1; // Indicates whether the logout was successful.
 }
 
-//-- -- --
 //---
 // rpc LogoutStudent(LogoutStudentRequest) returns (LogoutStudentResponse);
-//--
 message LogoutStudentRequest {
   string token = 1; // Auth token of the user to logout.
 }
@@ -166,10 +146,8 @@ message LogoutStudentResponse {
   bool success = 1; // Indicates whether the logout was successful.
 }
 
-//-- -- --
 //---
 // rpc GetTeacherProfileData(google.protobuf.Empty) returns (GetTeacherProfileDataResponse);
-//--
 message GetTeacherProfileDataResponse {
   string first_name = 1;
   string last_name = 2;
@@ -178,53 +156,46 @@ message GetTeacherProfileDataResponse {
   string email = 5;
 }
 
-//-- -- --
 //---
 // rpc GetStudentProfileData(google.protobuf.Empty) returns (GetStudentProfileDataResponse);
-
 message GetStudentProfileDataResponse {
   string first_name = 1;
   string last_name = 2;
   string patronimic = 3;
-  string teacher_login = 4;
+  string student_login = 4;
   string email = 5;
 }
 
-//-- -- --
 //---
 // rpc GetConfirmCode(google.protobuf.Empty) returns (stream GetConfirmCodeResponse);
-//--
-
 message GetConfirmCodeResponse {
   string code = 1;
 }
 
-//-- -- --
 //---
 // rpc GetAttendanceJournal(GetAttendanceJournalRequest) returns (GetAttendanceJournalResponse);
-//--
-
 message GetAttendanceJournalRequest {
-  string lesson_id = 1;
+  google.protobuf.Timestamp date = 1;
 }
 
 message GetAttendanceJournalResponse {
-  message AttendanceJournalLine {
-    int32 number = 1;
-    string student_name = 2;
-    bool is_attended = 3;
-  }
+  message AttendanceJournalLesson {
+    message AttendanceJournalLine {
+      int32 number = 1;
+      string student_name = 2;
+      bool is_attended = 3;
+    }
 
-  google.protobuf.Timestamp time_slot = 1;
-  string group = 2;
-  repeated AttendanceJournalLine attendanceJournalLine = 3;
+    google.protobuf.Timestamp time_slot = 1;
+    string lesson = 2;
+    string group = 3;
+    repeated AttendanceJournalLine attendanceJournalLine = 4;
+  }
+  repeated AttendanceJournalLesson attendanceJournalLesson = 1;
 }
 
-//-- -- --
 //---
 // rpc SubmitCode(SubmitCodeRequest) returns (SubmitCodeResponse);
-//--
-
 message SubmitCodeRequest {
   string code = 1;
 }
@@ -233,11 +204,8 @@ message SubmitCodeResponse {
   bool success = 1;
 }
 
-//-- -- --
 //---
 // rpc GetAttendanceLessons(GetAttendanceLessonsRequest) returns (GetAttendanceLessonsResponse);
-//--
-
 message GetAttendanceLessonsRequest {
   google.protobuf.Timestamp date = 1;
 }

@@ -6,15 +6,17 @@ import (
 	"net"
 
 	authgrpc "github.com/orenvadi/auth-grpc/grpc/auth"
-	"github.com/orenvadi/auth-grpc/internal/storage/postgres"
+	"github.com/orenvadi/auth-grpc/internal/storage/surrdb"
+
 	// "github.com/orenvadi/auth-grpc/internal/services/auth"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 type App struct {
 	log        *slog.Logger
 	gRPCServer *grpc.Server
-	db         *postgres.Storage
+	db         *surrdb.Storage
 	port       int
 }
 
@@ -23,9 +25,9 @@ type App struct {
 // }
 
 // New creates new gRPCServer app.
-func New(log *slog.Logger, authService authgrpc.Auth, db *postgres.Storage, port int) *App {
+func New(log *slog.Logger, authService authgrpc.Auth, confCodeService authgrpc.ConfCodes, db *surrdb.Storage, port int) *App {
 	gRPCServer := grpc.NewServer()
-	authgrpc.Register(gRPCServer, authService)
+	authgrpc.Register(gRPCServer, authService, confCodeService)
 
 	return &App{
 		log:        log,
@@ -56,6 +58,8 @@ func (a *App) Run() error {
 
 	log.Info("gRPC server is running", slog.String("addr ", l.Addr().String()))
 
+	reflection.Register(a.gRPCServer)
+
 	if err := a.gRPCServer.Serve(l); err != nil {
 		return fmt.Errorf("%s: %w", op, err)
 	}
@@ -73,10 +77,8 @@ func (a *App) Stop() {
 	log := a.log.With(slog.String("op: ", op))
 	log.Info("stopping gRPC server", slog.Int("port", a.port))
 
-	a.gRPCServer.GracefulStop()
-
-	if err := a.db.Stop(); err != nil {
-		panic("could not stop postgres connection")
-	}
+	defer a.db.Closer.Close()
 	log.Info("DB connection closed")
+
+	a.gRPCServer.GracefulStop()
 }

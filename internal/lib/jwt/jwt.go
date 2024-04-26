@@ -7,20 +7,24 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/orenvadi/auth-grpc/internal/domain/models"
+	"github.com/orenvadi/auth-grpc/internal/config"
 	"google.golang.org/grpc/metadata"
 )
 
+type User interface {
+	Id() string
+	GetEmail() string
+}
+
 // NewToken creates new JWT token for given user and app.
-func NewToken(user models.User, app models.App, duration time.Duration) (string, error) {
+func NewToken(user User, JwtSecret string, duration time.Duration) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
-	claims["uid"] = user.ID
-	claims["email"] = user.Email
+	claims["uid"] = user.Id()
+	claims["email"] = user.GetEmail()
 	claims["exp"] = time.Now().Add(duration).Unix()
-	claims["app_id"] = app.ID
 
-	tokenString, err := token.SignedString([]byte(app.Secret))
+	tokenString, err := token.SignedString([]byte(JwtSecret))
 	if err != nil {
 		return "", err
 	}
@@ -28,7 +32,7 @@ func NewToken(user models.User, app models.App, duration time.Duration) (string,
 	return tokenString, nil
 }
 
-func ValidateToken(ctx context.Context, app models.App) (claims jwt.MapClaims, err error) {
+func ValidateToken(ctx context.Context, cfg config.Config) (claims jwt.MapClaims, err error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("missing context metadata")
@@ -43,7 +47,7 @@ func ValidateToken(ctx context.Context, app models.App) (claims jwt.MapClaims, e
 
 	// Parse and validate JWT token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte([]byte(app.Secret)), nil
+		return []byte([]byte(cfg.JwtSecret)), nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)

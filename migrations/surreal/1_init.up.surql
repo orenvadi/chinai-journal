@@ -1,6 +1,6 @@
 DEFINE TABLE Student SCHEMAFULL; 
 
-DEFINE FIELD Name           ON TABLE Student TYPE object;
+DEFINE FIELD Name           ON TABLE Student FLEXIBLE TYPE object;
 DEFINE FIELD StudentCode   ON TABLE Student TYPE string;
 DEFINE FIELD PasswordHash  ON TABLE Student TYPE string;
 DEFINE FIELD Subjects       ON TABLE Student TYPE array<record<Subject>>;
@@ -10,12 +10,11 @@ DEFINE FIELD Groups         ON TABLE Student TYPE array<record<Group>>;
 
 DEFINE TABLE Teacher SCHEMAFULL; 
 
-DEFINE FIELD Name           ON TABLE Teacher TYPE object;
+DEFINE FIELD Name           ON TABLE Teacher FLEXIBLE TYPE object;
 DEFINE FIELD TeacherCode   ON TABLE Teacher TYPE string;
 DEFINE FIELD PasswordHash  ON TABLE Teacher TYPE string;
 DEFINE FIELD Subjects       ON TABLE Teacher TYPE array<record<Subject>>;
 DEFINE FIELD Groups         ON TABLE Teacher TYPE array<record<Group>>;
-
 
 
 DEFINE TABLE Subject SCHEMAFULL; 
@@ -62,5 +61,5 @@ DEFINE FIELD IsAttended           ON TABLE Attendance TYPE bool;
 
 DEFINE TABLE QrCode SCHEMAFULL; 
 
-DEFINE FIELD Code   ON TABLE QrCode TYPE string;
-DEFINE FIELD IsUsed ON TABLE QrCode TYPE bool;
+DEFINE FIELD Code         ON TABLE QrCode TYPE string;
+DEFINE FIELD FirstUseTime ON TABLE QrCode TYPE datetime;

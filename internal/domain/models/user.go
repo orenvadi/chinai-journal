@@ -1,16 +1,55 @@
 package models
 
-import "time"
+type User interface {
+	Student | Teacher
+}
 
-type User struct {
-	ID               int64     `db:"id"`
-	FirstName        string    `db:"first_name"`
-	LastName         string    `db:"last_name"`
-	PhoneNumber      string    `db:"phone_number"`
-	CreatedAt        time.Time `db:"created_at"`
-	UpdatedAt        time.Time `db:"updated_at"`
-	Email            string    `db:"email"`
-	PasswordHash     []byte    `db:"pass_hash"`
-	IsAdmin          bool      `db:"is_admin"`
-	IsEmailConfirmed bool      `db:"is_email_confirmed"`
+type Name struct {
+	FirstName  string
+	LastName   string
+	Patronimic string
+}
+
+type Student struct {
+	ID           string `json:"id"`
+	Name         Name
+	Email        string
+	PasswordHash []byte
+	StudentCode  string
+	Groups       []string
+	Subjects     []string
+}
+
+type Teacher struct {
+	ID           string `json:"id"`
+	Name         Name
+	Email        string
+	PasswordHash []byte
+	TeacherCode  string
+	Groups       []string
+	Subjects     []string
+}
+
+func (s Student) Id() string {
+	return s.ID
+}
+
+func (t Teacher) Id() string {
+	return t.ID
+}
+
+func (s Student) FullName() string {
+	return s.Name.FirstName + " " + s.Name.LastName
+}
+
+func (t Teacher) FullName() string {
+	return t.Name.FirstName + " " + t.Name.LastName
+}
+
+func (t Teacher) GetEmail() string {
+	return t.Email
+}
+
+func (s Student) GetEmail() string {
+	return s.Email
 }

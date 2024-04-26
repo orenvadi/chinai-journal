@@ -8,22 +8,21 @@ import (
 	"github.com/spf13/viper"
 )
 
+// jwt access token must live 7 days and refresh token 2 month
 type Config struct {
-	Env      string
-	Storage  Storage
-	TokenTTL time.Duration
-	GRPC     GRPC
+	Env       string
+	Storage   Storage
+	TokenTTL  time.Duration
+	GRPC      GRPC
+	JwtSecret string
 }
 
 type Storage struct {
-	User     string
-	Password string
-	Host     string
-	DbName   string
-}
-
-func (s Storage) DSN() string {
-	return fmt.Sprintf("%s:%s@%s/%s", s.User, s.Password, s.Host, s.DbName)
+	User        string
+	Password    string
+	Host        string
+	DbName      string
+	DbNameSpace string
 }
 
 type GRPC struct {
@@ -64,6 +63,16 @@ func MustLoad() *Config {
 	cfg.Storage.DbName = viper.GetString("STORAGE_DB_NAME")
 	if cfg.Storage.DbName == "" {
 		panic("STORAGE_DB_NAME environment variable is required")
+	}
+
+	cfg.Storage.DbNameSpace = viper.GetString("STORAGE_DB_NAME_SPACE")
+	if cfg.Storage.DbNameSpace == "" {
+		panic("STORAGE_DB_NAME_SPACE environment variable is required")
+	}
+
+	cfg.JwtSecret = viper.GetString("JWT_SECRET")
+	if cfg.JwtSecret == "" {
+		panic("JWT_SECRET environment variable is required")
 	}
 
 	tokenTTLStr := viper.GetString("TOKEN_TTL")

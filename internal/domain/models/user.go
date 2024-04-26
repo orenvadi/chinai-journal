@@ -1,9 +1,5 @@
 package models
 
-type User interface {
-	Student | Teacher
-}
-
 type Name struct {
 	FirstName  string
 	LastName   string
@@ -11,20 +7,20 @@ type Name struct {
 }
 
 type Student struct {
-	ID           string `json:"id"`
+	ID           string `json:"id,omitempty"`
 	Name         Name
 	Email        string
-	PasswordHash []byte
+	PasswordHash string // should be bytes, but cant unmarshall to []bytes from surrdb
 	StudentCode  string
 	Groups       []string
 	Subjects     []string
 }
 
 type Teacher struct {
-	ID           string `json:"id"`
+	ID           string `json:"id,omitempty"`
 	Name         Name
 	Email        string
-	PasswordHash []byte
+	PasswordHash string // should be bytes, but cant unmarshall to []bytes from surrdb
 	TeacherCode  string
 	Groups       []string
 	Subjects     []string

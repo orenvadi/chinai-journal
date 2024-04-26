@@ -14,7 +14,7 @@ func (s *Storage) SaveTeacher(ctx context.Context, teacher models.Teacher) (uid 
 		ID           string `json:"id,omitempty"`
 		Name         models.Name
 		Email        string
-		PasswordHash []byte
+		PasswordHash string
 		TeacherCode  string
 		Groups       []string
 		Subjects     []string
@@ -50,7 +50,7 @@ func (s *Storage) SaveStudent(ctx context.Context, student models.Student) (uid 
 		ID           string `json:"id,omitempty"`
 		Name         models.Name
 		Email        string
-		PasswordHash []byte
+		PasswordHash string
 		StudentCode  string
 		Groups       []string
 		Subjects     []string

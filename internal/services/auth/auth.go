@@ -100,7 +100,7 @@ func (a *Auth) RegisterTeacher(ctx context.Context, name models.Name, email, pas
 	user := models.Teacher{
 		Name:         name,
 		Email:        email,
-		PasswordHash: passwordHash,
+		PasswordHash: string(passwordHash),
 		TeacherCode:  teacherCode,
 		Groups:       groups,
 		Subjects:     subjects,
@@ -151,7 +151,7 @@ func (a *Auth) RegisterStudent(ctx context.Context, name models.Name, email, pas
 	user := models.Student{
 		Name:         name,
 		Email:        email,
-		PasswordHash: passwordHash,
+		PasswordHash: string(passwordHash),
 		StudentCode:  studentCode,
 		Groups:       groups,
 		Subjects:     subjects,

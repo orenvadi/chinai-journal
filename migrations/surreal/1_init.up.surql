@@ -1,8 +1,9 @@
 DEFINE TABLE Student SCHEMAFULL; 
 
 DEFINE FIELD Name           ON TABLE Student FLEXIBLE TYPE object;
-DEFINE FIELD StudentCode   ON TABLE Student TYPE string;
-DEFINE FIELD PasswordHash  ON TABLE Student TYPE string;
+DEFINE FIELD StudentCode    ON TABLE Student TYPE string;
+DEFINE INDEX StudentCodeIndex    ON TABLE Student COLUMNS StudentCode UNIQUE;
+DEFINE FIELD PasswordHash   ON TABLE Student TYPE string;
 DEFINE FIELD Subjects       ON TABLE Student TYPE array<record<Subject>>;
 DEFINE FIELD Groups         ON TABLE Student TYPE array<record<Group>>;
 
@@ -11,8 +12,9 @@ DEFINE FIELD Groups         ON TABLE Student TYPE array<record<Group>>;
 DEFINE TABLE Teacher SCHEMAFULL; 
 
 DEFINE FIELD Name           ON TABLE Teacher FLEXIBLE TYPE object;
-DEFINE FIELD TeacherCode   ON TABLE Teacher TYPE string;
-DEFINE FIELD PasswordHash  ON TABLE Teacher TYPE string;
+DEFINE FIELD TeacherCode    ON TABLE Teacher TYPE string;
+DEFINE INDEX TeacherCodeIndex    ON TABLE Teacher COLUMNS TeacherCode UNIQUE;
+DEFINE FIELD PasswordHash   ON TABLE Teacher TYPE string;
 DEFINE FIELD Subjects       ON TABLE Teacher TYPE array<record<Subject>>;
 DEFINE FIELD Groups         ON TABLE Teacher TYPE array<record<Group>>;
 
@@ -25,14 +27,17 @@ DEFINE FIELD Name ON TABLE Subject TYPE string;
 
 DEFINE TABLE Group SCHEMAFULL; 
 
-DEFINE FIELD Name ON TABLE Group TYPE string;
+DEFINE FIELD Name       ON TABLE Group TYPE string;
+DEFINE INDEX NameIndex  ON TABLE Group COLUMNS Name UNIQUE;
 
 
 
 DEFINE TABLE Location SCHEMAFULL; 
 
 DEFINE FIELD Name               ON TABLE Location TYPE string;
+DEFINE INDEX NameIndex          ON TABLE Location COLUMNS Name UNIQUE;
 DEFINE FIELD PrelimConfirmCode  ON TABLE Location TYPE string;
+
 
 
 

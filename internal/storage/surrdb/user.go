@@ -89,12 +89,58 @@ func (s *Storage) UpdateStudent(ctx context.Context, usr models.Student, email s
 	return
 }
 
-func (s *Storage) GetTeacherProfileData(ctx context.Context, email string) (teacher models.Teacher, err error) {
-	const op = "storage.surrdb.GetTeacherProfileData"
-	return
+type DbResGetTeacherProfileData struct {
+	Result []models.Teacher `json:"result"`
 }
 
-func (s *Storage) GetStudentProfileData(ctx context.Context, email string) (student models.Student, err error) {
+func (s *Storage) GetTeacherProfileData(ctx context.Context, teacherLogin string) (teacher models.Teacher, err error) {
+	const op = "storage.surrdb.GetTeacherProfileData"
+	res := []DbResGetTeacherProfileData{}
+
+	var data interface{}
+
+	println(teacherLogin)
+	data, err = s.db.Query("SELECT * FROM Teacher WHERE TeacherCode = $teacherLogin;", map[string]string{
+		"teacherLogin": teacherLogin,
+	})
+	if err != nil {
+		return models.Teacher{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	err = surrealdb.Unmarshal(data, &res)
+	if err != nil {
+		return models.Teacher{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	teacher = res[0].Result[0]
+
+	return teacher, nil
+}
+
+type DbResGetStudentProfileData struct {
+	Result []models.Student `json:"result"`
+}
+
+func (s *Storage) GetStudentProfileData(ctx context.Context, studentLogin string) (student models.Student, err error) {
 	const op = "storage.surrdb.GetStudentProfileData"
-	return
+	res := []DbResGetStudentProfileData{}
+
+	var data interface{}
+
+	println(studentLogin)
+	data, err = s.db.Query("SELECT * FROM Student WHERE StudentCode = $studentLogin;", map[string]string{
+		"studentLogin": studentLogin,
+	})
+	if err != nil {
+		return models.Student{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	err = surrealdb.Unmarshal(data, &res)
+	if err != nil {
+		return models.Student{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	student = res[0].Result[0]
+
+	return student, nil
 }

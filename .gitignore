@@ -4,6 +4,8 @@
 *.exe
 *.exe~
 *.so
+*.env
+*/.idea
 
 # Testing
 *.test

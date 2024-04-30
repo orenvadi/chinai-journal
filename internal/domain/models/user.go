@@ -49,3 +49,11 @@ func (t Teacher) GetEmail() string {
 func (s Student) GetEmail() string {
 	return s.Email
 }
+
+func (t Teacher) GetUserCode() string {
+	return t.TeacherCode
+}
+
+func (s Student) GetUserCode() string {
+	return s.StudentCode
+}

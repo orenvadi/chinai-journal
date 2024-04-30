@@ -14,6 +14,7 @@ import (
 type User interface {
 	Id() string
 	GetEmail() string
+	GetUserCode() string
 }
 
 // NewToken creates new JWT token for given user and app.
@@ -22,6 +23,7 @@ func NewToken(user User, JwtSecret string, duration time.Duration) (string, erro
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = user.Id()
 	claims["email"] = user.GetEmail()
+	claims["login"] = user.GetUserCode()
 	claims["exp"] = time.Now().Add(duration).Unix()
 
 	tokenString, err := token.SignedString([]byte(JwtSecret))

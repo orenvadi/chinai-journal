@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/orenvadi/auth-grpc/internal/config"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -34,7 +33,7 @@ func NewToken(user User, JwtSecret string, duration time.Duration) (string, erro
 	return tokenString, nil
 }
 
-func ValidateToken(ctx context.Context, cfg config.Config) (claims jwt.MapClaims, err error) {
+func ValidateToken(ctx context.Context, jwtSecret string) (claims jwt.MapClaims, err error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, fmt.Errorf("missing context metadata")
@@ -49,7 +48,7 @@ func ValidateToken(ctx context.Context, cfg config.Config) (claims jwt.MapClaims
 
 	// Parse and validate JWT token
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte([]byte(cfg.JwtSecret)), nil
+		return []byte(jwtSecret), nil
 	})
 	if err != nil {
 		return nil, fmt.Errorf("invalid token: %v", err)

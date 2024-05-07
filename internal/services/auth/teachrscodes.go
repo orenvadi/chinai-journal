@@ -2,7 +2,7 @@ package auth
 
 import (
 	"context"
-	"time"
+	// "time"
 
 	"github.com/orenvadi/auth-grpc/internal/domain/models"
 )
@@ -13,7 +13,7 @@ func (a *Auth) GetTeachersConfirmCodes(ctx context.Context) (codes []models.QrCo
 	return
 }
 
-func (a *Auth) GetAttendanceJournal(ctx context.Context, date time.Time) (journal []models.Attendance, err error) {
-	const op = "auth.GetAttendanceJournal"
-	return
-}
+// func (a *Auth) GetAttendanceJournal(ctx context.Context, date time.Time) (journal []models.Attendance, err error) {
+// 	const op = "auth.GetAttendanceJournal"
+// 	return
+// }

@@ -214,7 +214,8 @@ message GetAttendanceLessonsResponse {
   message AttendanceLessonsLine {
     google.protobuf.Timestamp time_slot = 1;
     string group = 2;
-    bool is_attended = 3;
+    string subject = 3;
+    bool is_attended = 4;
   }
 
   google.protobuf.Timestamp date = 1;

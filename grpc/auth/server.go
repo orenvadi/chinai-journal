@@ -41,11 +41,11 @@ type Auth interface {
 type ConfCodes interface {
 	// teachers
 	GetTeachersConfirmCodes(ctx context.Context) (codes []models.QrCode, err error)
-	GetAttendanceJournal(ctx context.Context, date time.Time) (journal []models.Attendance, err error)
+	GetAttendanceJournal(ctx context.Context, date time.Time) (journal []models.AttendanceLessons, err error)
 
 	// students
 	SubmitCode(ctx context.Context, code string) (err error)
-	GetAttendanceLessons(ctx context.Context, date time.Time) (lessons []models.Attendance, err error)
+	GetAttendanceLessons(ctx context.Context, date time.Time) (lessons models.AttendanceLessons, err error)
 }
 
 type serverAPI struct {

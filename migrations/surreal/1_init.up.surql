@@ -71,4 +71,4 @@ DEFINE FIELD IsAttended           ON TABLE Attendance TYPE bool;
 DEFINE TABLE QrCode SCHEMAFULL; 
 
 DEFINE FIELD Code         ON TABLE QrCode TYPE string;
-DEFINE FIELD FirstUseTime ON TABLE QrCode TYPE datetime;
+DEFINE FIELD FirstUseTime ON TABLE QrCode TYPE option<datetime>;

@@ -3,10 +3,10 @@ package models
 import "time"
 
 type Schedule struct {
-	Subject  string
-	Group    string
+	Subject  Subject
+	Group    Group
 	Teacher  string
-	Location string
+	Location Location
 	Dateslot time.Time
 	Timeslot time.Time
 	QrCodes  []string

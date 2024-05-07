@@ -43,13 +43,13 @@ type UserProvider interface {
 }
 
 type AttendanceProvider interface {
-	GetAttendanceLessons(ctx context.Context) ([]models.Attendance, error)
-	GetAttendanceJournal(ctx context.Context, lessonId string) ([]models.Attendance, error)
+	GetAttendanceLessons(ctx context.Context, date time.Time, userLogin string) ([]models.Attendance, error)
+	GetAttendanceJournal(ctx context.Context, date time.Time, userLogin string) ([]models.Attendance, error)
 }
 
 type ConfirmationProvider interface {
-	GetConfirmCode(ctx context.Context, usrID string, time time.Time) ([]models.QrCode, error)
-	SubmitCode(ctx context.Context) error
+	GetConfirmCode(ctx context.Context, userId string, time time.Time) ([]models.QrCode, error)
+	SubmitCode(ctx context.Context, userId, code string) error
 }
 
 var (

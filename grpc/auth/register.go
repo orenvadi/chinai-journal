@@ -23,8 +23,8 @@ func (s *serverAPI) RegisterTeacher(ctx context.Context, req *sso.RegisterTeache
 	}
 
 	usrName := models.Name{
-		FirstName:  req.GetFirstName(),
-		LastName:   req.GetLastName(),
+		First:      req.GetFirstName(),
+		Last:       req.GetLastName(),
 		Patronimic: req.GetPatronimic(),
 	}
 
@@ -52,8 +52,8 @@ func (s *serverAPI) RegisterStudent(ctx context.Context, req *sso.RegisterStuden
 	}
 
 	usrName := models.Name{
-		FirstName:  req.GetFirstName(),
-		LastName:   req.GetLastName(),
+		First:      req.GetFirstName(),
+		Last:       req.GetLastName(),
 		Patronimic: req.GetPatronimic(),
 	}
 

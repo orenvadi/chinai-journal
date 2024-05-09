@@ -16,8 +16,8 @@ func (s *serverAPI) GetTeacherProfileData(ctx context.Context, empty *emptypb.Em
 	}
 
 	return &sso.GetTeacherProfileDataResponse{
-		FirstName:    user.Name.FirstName,
-		LastName:     user.Name.LastName,
+		FirstName:    user.Name.First,
+		LastName:     user.Name.Last,
 		Patronimic:   user.Name.Patronimic,
 		TeacherLogin: user.TeacherCode,
 		Email:        user.GetEmail(),
@@ -31,8 +31,8 @@ func (s *serverAPI) GetStudentProfileData(ctx context.Context, empty *emptypb.Em
 	}
 
 	return &sso.GetStudentProfileDataResponse{
-		FirstName:    user.Name.FirstName,
-		LastName:     user.Name.LastName,
+		FirstName:    user.Name.First,
+		LastName:     user.Name.Last,
 		Patronimic:   user.Name.Patronimic,
 		StudentLogin: user.StudentCode,
 		Email:        user.GetEmail(),

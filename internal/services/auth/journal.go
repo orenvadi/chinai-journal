@@ -62,7 +62,7 @@ func (a *Auth) GetAttendanceJournal(
 	ctx context.Context,
 	date time.Time,
 ) (
-	journal []models.AttendanceLessons,
+	journal []models.AttendanceJournal,
 	err error,
 ) {
 	const op = "auth.GetAttendanceJournal"
@@ -73,5 +73,53 @@ func (a *Auth) GetAttendanceJournal(
 
 	log.Info("getting attendance journal")
 
-	return
+	claims, err := jwtn.ValidateToken(ctx, a.jwtSecret)
+	if err != nil {
+		log.Info("could not get claims")
+		return []models.AttendanceJournal{}, fmt.Errorf("invalid token claims")
+	}
+
+	usrLogin := claims["login"].(string)
+
+	rawLessons, err := a.attendanceProvider.GetAttendanceJournal(ctx, date, usrLogin)
+	if err != nil {
+		log.Info("could not get data from db")
+		return []models.AttendanceJournal{}, fmt.Errorf("error getting data from db")
+	}
+
+	journal = []models.AttendanceJournal{}
+
+	// transforming rawLessons to journal
+
+	journalMap := map[models.AttendanceJournalKey][]models.AttendanceJournalLine{}
+
+	for i, rawLesson := range rawLessons {
+		key := models.AttendanceJournalKey{
+			TimeSlot: rawLesson.Schedule.Timeslot,
+			Lesson:   rawLesson.Schedule.Subject.Name,
+			Group:    rawLesson.Schedule.Group.Name,
+		}
+
+		value := models.AttendanceJournalLine{
+			Number:      i + 1,
+			StudentName: rawLesson.Student.FullName(),
+			IsAttended:  rawLesson.IsAttended,
+		}
+
+		journalMap[key] = append(journalMap[key], value)
+	}
+
+	for k := range journalMap {
+		journal = append(
+			journal,
+			models.AttendanceJournal{
+				TimeSlot:              k.TimeSlot,
+				Lesson:                k.Lesson,
+				Group:                 k.Group,
+				AttendanceJournalLine: journalMap[k],
+			},
+		)
+	}
+
+	return journal, nil
 }

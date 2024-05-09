@@ -189,9 +189,9 @@ message GetAttendanceJournalResponse {
     google.protobuf.Timestamp time_slot = 1;
     string lesson = 2;
     string group = 3;
-    repeated AttendanceJournalLine attendanceJournalLine = 4;
+    repeated AttendanceJournalLine attendanceJournalLines = 4;
   }
-  repeated AttendanceJournalLesson attendanceJournalLesson = 1;
+  repeated AttendanceJournalLesson attendanceJournalLessons = 1;
 }
 
 //---

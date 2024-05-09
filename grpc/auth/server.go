@@ -41,7 +41,7 @@ type Auth interface {
 type ConfCodes interface {
 	// teachers
 	GetTeachersConfirmCodes(ctx context.Context) (codes []models.QrCode, err error)
-	GetAttendanceJournal(ctx context.Context, date time.Time) (journal []models.AttendanceLessons, err error)
+	GetAttendanceJournal(ctx context.Context, date time.Time) (journal []models.AttendanceJournal, err error)
 
 	// students
 	SubmitCode(ctx context.Context, code string) (err error)

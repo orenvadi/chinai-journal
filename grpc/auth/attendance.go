@@ -16,7 +16,34 @@ func (s *serverAPI) GetAttendanceJournal(
 	res *sso.GetAttendanceJournalResponse,
 	err error,
 ) {
-	return
+	journal, err := s.confCodes.GetAttendanceJournal(ctx, req.Date.AsTime())
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	journalLessons := []*sso.GetAttendanceJournalResponse_AttendanceJournalLesson{}
+
+	for _, lessons := range journal {
+
+		journalLines := []*sso.GetAttendanceJournalResponse_AttendanceJournalLesson_AttendanceJournalLine{}
+
+		for _, line := range lessons.AttendanceJournalLine {
+			journalLines = append(journalLines, &sso.GetAttendanceJournalResponse_AttendanceJournalLesson_AttendanceJournalLine{
+				Number:      int32(line.Number),
+				StudentName: line.StudentName,
+				IsAttended:  line.IsAttended,
+			})
+		}
+
+		journalLessons = append(journalLessons, &sso.GetAttendanceJournalResponse_AttendanceJournalLesson{
+			TimeSlot:               timestamppb.New(lessons.TimeSlot),
+			Lesson:                 lessons.Lesson,
+			Group:                  lessons.Group,
+			AttendanceJournalLines: journalLines,
+		})
+	}
+
+	return &sso.GetAttendanceJournalResponse{AttendanceJournalLessons: journalLessons}, nil
 }
 
 func (s *serverAPI) GetAttendanceLessons(

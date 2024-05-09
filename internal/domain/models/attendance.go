@@ -12,6 +12,16 @@ type Attendance struct {
 	IsAttended           bool
 }
 
+type AttendanceWithFullStudent struct {
+	ID                   string `json:"id,omitempty"`
+	Subject              string
+	Student              Student
+	Schedule             Schedule
+	IsRoomCodeScanned    bool
+	IsConfirmCodeScanned bool
+	IsAttended           bool
+}
+
 // intermediate model to send between logic and transport layers
 type AttendanceLessons struct {
 	AttendanceLessons []AttendanceLessonLine
@@ -23,4 +33,24 @@ type AttendanceLessonLine struct {
 	Group      string
 	Subject    string
 	IsAttended bool
+}
+
+// intermediate model to send between logic and transport layers
+type AttendanceJournal struct {
+	TimeSlot              time.Time
+	Lesson                string
+	Group                 string
+	AttendanceJournalLine []AttendanceJournalLine
+}
+
+type AttendanceJournalKey struct {
+	TimeSlot time.Time
+	Lesson   string
+	Group    string
+}
+
+type AttendanceJournalLine struct {
+	Number      int
+	StudentName string
+	IsAttended  bool
 }

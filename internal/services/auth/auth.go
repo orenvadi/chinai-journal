@@ -44,7 +44,7 @@ type UserProvider interface {
 
 type AttendanceProvider interface {
 	GetAttendanceLessons(ctx context.Context, date time.Time, userLogin string) ([]models.Attendance, error)
-	GetAttendanceJournal(ctx context.Context, date time.Time, userLogin string) ([]models.Attendance, error)
+	GetAttendanceJournal(ctx context.Context, date time.Time, userLogin string) ([]models.AttendanceWithFullStudent, error)
 }
 
 type ConfirmationProvider interface {
@@ -82,7 +82,7 @@ func New(
 }
 
 func (a *Auth) SetNewPassword(ctx context.Context, confirmCode, email string, newPassword string) (err error) {
-	const op = "auth.SetNewPassword"
+	// const op = "auth.SetNewPassword"
 	return
 }
 

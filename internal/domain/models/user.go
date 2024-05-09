@@ -1,8 +1,8 @@
 package models
 
 type Name struct {
-	FirstName  string
-	LastName   string
+	First      string
+	Last       string
 	Patronimic string
 }
 
@@ -35,11 +35,11 @@ func (t Teacher) Id() string {
 }
 
 func (s Student) FullName() string {
-	return s.Name.FirstName + " " + s.Name.LastName
+	return s.Name.First + " " + s.Name.Last
 }
 
 func (t Teacher) FullName() string {
-	return t.Name.FirstName + " " + t.Name.LastName
+	return t.Name.First + " " + t.Name.Last
 }
 
 func (t Teacher) GetEmail() string {

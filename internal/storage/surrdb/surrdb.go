@@ -1,6 +1,9 @@
 package surrdb
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/surrealdb/surrealdb.go"
 )
 
@@ -31,4 +34,10 @@ func New(host, user, pass, ns, database string) (*Storage, error) {
 	}
 
 	return &Storage{db, db}, nil
+}
+
+func PrintOut[T any](something T) {
+	output, _ := json.MarshalIndent(something, "", "  ")
+
+	fmt.Printf("%s \n", output)
 }

@@ -120,9 +120,39 @@ func (s *Storage) GetAttendanceJournal(
 	return attendances, nil
 }
 
-func (s *Storage) GetConfirmCode(ctx context.Context, userID string, time time.Time) (attendanceJournal []models.QrCode, err error) {
+type DbResGetConfirmCode struct {
+	Result []models.ScheduleQrCodes `json:"result"`
+}
+
+func (s *Storage) GetConfirmCode(
+	userLogin string,
+) (
+	codes []models.ScheduleQrCodes,
+	err error,
+) {
 	const op = "storage.surrdb.GetConfirmCode"
-	return
+
+	schema := `
+    SELECT QrCodes[*][*], Timeslot FROM Schedule 
+    WHERE 
+      Teacher.TeacherCode = $teacherLogin;
+  `
+
+	data, err := s.db.Query(schema, map[string]string{
+		"teacherLogin": userLogin,
+	})
+	if err != nil {
+		return []models.ScheduleQrCodes{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	res := []DbResGetConfirmCode{}
+
+	err = surrealdb.Unmarshal(data, &res)
+	if err != nil {
+		return []models.ScheduleQrCodes{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return res[0].Result, nil
 }
 
 func (s *Storage) SubmitCode(ctx context.Context, userId, code string) (err error) {

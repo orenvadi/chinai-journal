@@ -1,4 +1,4 @@
-SELECT * FROM Student;
+SELECT QrCodes[*][*], Timeslot FROM Schedule WHERE Teacher.TeacherCode = 'dzhalbiev';
 -- info for db
 -- create Student SET
 --   Name.First = 'Amit',

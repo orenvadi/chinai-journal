@@ -48,7 +48,7 @@ type AttendanceProvider interface {
 }
 
 type ConfirmationProvider interface {
-	GetConfirmCode(ctx context.Context, userId string, time time.Time) ([]models.QrCode, error)
+	GetConfirmCode(userLogin string) ([]models.ScheduleQrCodes, error)
 	SubmitCode(ctx context.Context, userId, code string) error
 }
 

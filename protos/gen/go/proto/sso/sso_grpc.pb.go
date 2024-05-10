@@ -39,7 +39,7 @@ type AuthClient interface {
 	GetTeacherProfileData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetTeacherProfileDataResponse, error)
 	GetStudentProfileData(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetStudentProfileDataResponse, error)
 	// at the end of lesson
-	GetConfirmCode(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Auth_GetConfirmCodeClient, error)
+	GetConfirmCode(ctx context.Context, in *GetConfirmCodeRequest, opts ...grpc.CallOption) (Auth_GetConfirmCodeClient, error)
 	GetAttendanceJournal(ctx context.Context, in *GetAttendanceJournalRequest, opts ...grpc.CallOption) (*GetAttendanceJournalResponse, error)
 	// ----------------STUDENTS
 	// both at the start and the end of lesson
@@ -145,7 +145,7 @@ func (c *authClient) GetStudentProfileData(ctx context.Context, in *emptypb.Empt
 	return out, nil
 }
 
-func (c *authClient) GetConfirmCode(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Auth_GetConfirmCodeClient, error) {
+func (c *authClient) GetConfirmCode(ctx context.Context, in *GetConfirmCodeRequest, opts ...grpc.CallOption) (Auth_GetConfirmCodeClient, error) {
 	stream, err := c.cc.NewStream(ctx, &Auth_ServiceDesc.Streams[0], "/auth.Auth/GetConfirmCode", opts...)
 	if err != nil {
 		return nil, err
@@ -224,7 +224,7 @@ type AuthServer interface {
 	GetTeacherProfileData(context.Context, *emptypb.Empty) (*GetTeacherProfileDataResponse, error)
 	GetStudentProfileData(context.Context, *emptypb.Empty) (*GetStudentProfileDataResponse, error)
 	// at the end of lesson
-	GetConfirmCode(*emptypb.Empty, Auth_GetConfirmCodeServer) error
+	GetConfirmCode(*GetConfirmCodeRequest, Auth_GetConfirmCodeServer) error
 	GetAttendanceJournal(context.Context, *GetAttendanceJournalRequest) (*GetAttendanceJournalResponse, error)
 	// ----------------STUDENTS
 	// both at the start and the end of lesson
@@ -267,7 +267,7 @@ func (UnimplementedAuthServer) GetTeacherProfileData(context.Context, *emptypb.E
 func (UnimplementedAuthServer) GetStudentProfileData(context.Context, *emptypb.Empty) (*GetStudentProfileDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStudentProfileData not implemented")
 }
-func (UnimplementedAuthServer) GetConfirmCode(*emptypb.Empty, Auth_GetConfirmCodeServer) error {
+func (UnimplementedAuthServer) GetConfirmCode(*GetConfirmCodeRequest, Auth_GetConfirmCodeServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetConfirmCode not implemented")
 }
 func (UnimplementedAuthServer) GetAttendanceJournal(context.Context, *GetAttendanceJournalRequest) (*GetAttendanceJournalResponse, error) {
@@ -473,7 +473,7 @@ func _Auth_GetStudentProfileData_Handler(srv interface{}, ctx context.Context, d
 }
 
 func _Auth_GetConfirmCode_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(emptypb.Empty)
+	m := new(GetConfirmCodeRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}

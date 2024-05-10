@@ -37,7 +37,7 @@ service Auth {
   // ----------------TEACHERS
 
   // at the end of lesson
-  rpc GetConfirmCode(google.protobuf.Empty) returns (stream GetConfirmCodeResponse);
+  rpc GetConfirmCode(GetConfirmCodeRequest) returns (stream GetConfirmCodeResponse);
 
   rpc GetAttendanceJournal(GetAttendanceJournalRequest) returns (GetAttendanceJournalResponse);
 
@@ -167,7 +167,12 @@ message GetStudentProfileDataResponse {
 }
 
 //---
-// rpc GetConfirmCode(google.protobuf.Empty) returns (stream GetConfirmCodeResponse);
+// rpc GetConfirmCode(GetConfirmCodeRequest) returns (stream GetConfirmCodeResponse);
+
+message GetConfirmCodeRequest {
+  string teacher_login = 1;
+}
+
 message GetConfirmCodeResponse {
   string code = 1;
 }

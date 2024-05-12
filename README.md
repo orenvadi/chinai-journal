@@ -77,7 +77,6 @@ so every time you regenerate protos
 ## TODO 
 
 -[x] Finish MVP
-
 -[] Connect to ebilim through web scraping
 -[] Reset password
 -[x] Get user data

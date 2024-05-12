@@ -43,7 +43,8 @@ type AuthClient interface {
 	GetAttendanceJournal(ctx context.Context, in *GetAttendanceJournalRequest, opts ...grpc.CallOption) (*GetAttendanceJournalResponse, error)
 	// ----------------STUDENTS
 	// both at the start and the end of lesson
-	SubmitCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error)
+	SubmitTeacherCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error)
+	SubmitRoomCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error)
 	GetAttendanceLessons(ctx context.Context, in *GetAttendanceLessonsRequest, opts ...grpc.CallOption) (*GetAttendanceLessonsResponse, error)
 }
 
@@ -186,9 +187,18 @@ func (c *authClient) GetAttendanceJournal(ctx context.Context, in *GetAttendance
 	return out, nil
 }
 
-func (c *authClient) SubmitCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error) {
+func (c *authClient) SubmitTeacherCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error) {
 	out := new(SubmitCodeResponse)
-	err := c.cc.Invoke(ctx, "/auth.Auth/SubmitCode", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/auth.Auth/SubmitTeacherCode", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authClient) SubmitRoomCode(ctx context.Context, in *SubmitCodeRequest, opts ...grpc.CallOption) (*SubmitCodeResponse, error) {
+	out := new(SubmitCodeResponse)
+	err := c.cc.Invoke(ctx, "/auth.Auth/SubmitRoomCode", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -228,7 +238,8 @@ type AuthServer interface {
 	GetAttendanceJournal(context.Context, *GetAttendanceJournalRequest) (*GetAttendanceJournalResponse, error)
 	// ----------------STUDENTS
 	// both at the start and the end of lesson
-	SubmitCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error)
+	SubmitTeacherCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error)
+	SubmitRoomCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error)
 	GetAttendanceLessons(context.Context, *GetAttendanceLessonsRequest) (*GetAttendanceLessonsResponse, error)
 	mustEmbedUnimplementedAuthServer()
 }
@@ -273,8 +284,11 @@ func (UnimplementedAuthServer) GetConfirmCode(*GetConfirmCodeRequest, Auth_GetCo
 func (UnimplementedAuthServer) GetAttendanceJournal(context.Context, *GetAttendanceJournalRequest) (*GetAttendanceJournalResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAttendanceJournal not implemented")
 }
-func (UnimplementedAuthServer) SubmitCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SubmitCode not implemented")
+func (UnimplementedAuthServer) SubmitTeacherCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitTeacherCode not implemented")
+}
+func (UnimplementedAuthServer) SubmitRoomCode(context.Context, *SubmitCodeRequest) (*SubmitCodeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubmitRoomCode not implemented")
 }
 func (UnimplementedAuthServer) GetAttendanceLessons(context.Context, *GetAttendanceLessonsRequest) (*GetAttendanceLessonsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAttendanceLessons not implemented")
@@ -511,20 +525,38 @@ func _Auth_GetAttendanceJournal_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Auth_SubmitCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Auth_SubmitTeacherCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SubmitCodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthServer).SubmitCode(ctx, in)
+		return srv.(AuthServer).SubmitTeacherCode(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/auth.Auth/SubmitCode",
+		FullMethod: "/auth.Auth/SubmitTeacherCode",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthServer).SubmitCode(ctx, req.(*SubmitCodeRequest))
+		return srv.(AuthServer).SubmitTeacherCode(ctx, req.(*SubmitCodeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Auth_SubmitRoomCode_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubmitCodeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthServer).SubmitRoomCode(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/auth.Auth/SubmitRoomCode",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthServer).SubmitRoomCode(ctx, req.(*SubmitCodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -599,8 +631,12 @@ var Auth_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Auth_GetAttendanceJournal_Handler,
 		},
 		{
-			MethodName: "SubmitCode",
-			Handler:    _Auth_SubmitCode_Handler,
+			MethodName: "SubmitTeacherCode",
+			Handler:    _Auth_SubmitTeacherCode_Handler,
+		},
+		{
+			MethodName: "SubmitRoomCode",
+			Handler:    _Auth_SubmitRoomCode_Handler,
 		},
 		{
 			MethodName: "GetAttendanceLessons",

@@ -43,7 +43,9 @@ service Auth {
 
   // ----------------STUDENTS
   // both at the start and the end of lesson
-  rpc SubmitCode(SubmitCodeRequest) returns (SubmitCodeResponse);
+  rpc SubmitTeacherCode(SubmitCodeRequest) returns (SubmitCodeResponse);
+
+  rpc SubmitRoomCode(SubmitCodeRequest) returns (SubmitCodeResponse);
 
   rpc GetAttendanceLessons(GetAttendanceLessonsRequest) returns (GetAttendanceLessonsResponse);
 }

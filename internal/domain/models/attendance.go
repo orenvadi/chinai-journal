@@ -11,6 +11,15 @@ type Attendance struct {
 	IsConfirmCodeScanned bool
 	IsAttended           bool
 }
+type AttendanceNoNested struct {
+	ID                   string `json:"id,omitempty"`
+	Subject              string
+	Student              string
+	Schedule             string
+	IsRoomCodeScanned    bool
+	IsConfirmCodeScanned bool
+	IsAttended           bool
+}
 
 type AttendanceWithFullStudent struct {
 	ID                   string `json:"id,omitempty"`
@@ -53,4 +62,17 @@ type AttendanceJournalLine struct {
 	Number      int
 	StudentName string
 	IsAttended  bool
+}
+
+type AttendanceCodes struct {
+	ID       string `json:"id,omitempty"`
+	Schedule struct {
+		QrCodes  []QrCode
+		Timeslot time.Time
+	}
+}
+
+type AttendanceRoom struct {
+	ID       string `json:"id,omitempty"`
+	Schedule Schedule
 }

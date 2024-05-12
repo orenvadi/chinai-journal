@@ -44,7 +44,8 @@ type ConfCodes interface {
 	GetAttendanceJournal(ctx context.Context, date time.Time) (journal []models.AttendanceJournal, err error)
 
 	// students
-	SubmitCode(ctx context.Context, code string) (err error)
+	SubmitRoomCode(ctx context.Context, code string) (err error)
+	SubmitTeacherCode(ctx context.Context, code string) (err error)
 	GetAttendanceLessons(ctx context.Context, date time.Time) (lessons models.AttendanceLessons, err error)
 }
 

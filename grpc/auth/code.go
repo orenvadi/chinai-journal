@@ -1,6 +1,7 @@
 package grpcauth
 
 import (
+	"context"
 	"time"
 
 	"github.com/orenvadi/auth-grpc/protos/gen/go/proto/sso"
@@ -26,4 +27,18 @@ func (s *serverAPI) GetConfirmCode(req *sso.GetConfirmCodeRequest, stream sso.Au
 	}
 
 	return nil
+}
+
+func (s *serverAPI) SubmitRoomCode(ctx context.Context, req *sso.SubmitCodeRequest) (res *sso.SubmitCodeResponse, err error) {
+	if err := s.confCodes.SubmitRoomCode(ctx, req.Code); err != nil {
+		return &sso.SubmitCodeResponse{Success: false}, status.Error(codes.Internal, err.Error())
+	}
+	return &sso.SubmitCodeResponse{Success: true}, nil
+}
+
+func (s *serverAPI) SubmitTeacherCode(ctx context.Context, req *sso.SubmitCodeRequest) (res *sso.SubmitCodeResponse, err error) {
+	if err := s.confCodes.SubmitTeacherCode(ctx, req.Code); err != nil {
+		return &sso.SubmitCodeResponse{Success: false}, status.Error(codes.Internal, err.Error())
+	}
+	return &sso.SubmitCodeResponse{Success: true}, nil
 }

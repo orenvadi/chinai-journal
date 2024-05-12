@@ -3,7 +3,16 @@
 
 ## How to run
 
-To run the project you must have a [SurrealDB](https://surrealdb.com/docs/surrealdb/installation/) database, configs are located in config/config.yaml
+To run the project you must have a [SurrealDB](https://surrealdb.com/docs/surrealdb/installation/) database, configs are must be located in .env
+
+**Create the database**
+
+you must be in a root of project
+
+```sh
+surreal start --user root --pass root --bind 0.0.0.0:8080 file:storage
+```
+
 
 **Migrate the database**
 
@@ -12,6 +21,7 @@ make migrate
 ```
 
 if it does not work, you have to adjust the main Makefile
+
 
 **Run the server on local machine**
 
@@ -64,15 +74,13 @@ so every time you regenerate protos
 
 
 
-
 ## TODO 
 
 -[x] Finish MVP
 
 -[] Connect to ebilim through web scraping
 -[] Reset password
-
--[] Get user data
+-[x] Get user data
 -[] Refresh token
-
-
+-[] Write more functional migrator
+-[] Refactor code, cause there're a lot of boilerplate code repetition, especially in domain/models and internal/storage

@@ -1,3 +1,4 @@
+
 # INAI attendance journal
 
 
@@ -76,16 +77,16 @@ so every time you regenerate protos
 
 ## TODO 
 
--[x] Finish MVP
+- [x] Finish MVP
 
--[] Connect to ebilim through web scraping
+- [ ] Connect to ebilim through web scraping
 
--[] Reset password
+- [ ] Reset password
 
--[x] Get user data
+- [x] Get user data
 
--[] Refresh token
+- [ ] Refresh token
 
--[] Write more functional migrator
+- [ ] Write more functional migrator
 
--[] Refactor code, cause there're a lot of boilerplate code repetition, especially in domain/models and internal/storage
+- [ ] Refactor code, cause there are a lot of boilerplate code repetition, especially in domain/models and internal/storage

@@ -77,9 +77,15 @@ so every time you regenerate protos
 ## TODO 
 
 -[x] Finish MVP
+
 -[] Connect to ebilim through web scraping
+
 -[] Reset password
+
 -[x] Get user data
+
 -[] Refresh token
+
 -[] Write more functional migrator
+
 -[] Refactor code, cause there're a lot of boilerplate code repetition, especially in domain/models and internal/storage

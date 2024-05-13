@@ -42,6 +42,9 @@ func (s *Storage) GetConfirmCode(
 		return []models.ScheduleQrCodes{}, fmt.Errorf("%s: %w", op, err)
 	}
 
+	if len(res[0].Result) == 0 {
+		return []models.ScheduleQrCodes{}, fmt.Errorf("%s: %w", op, errors.New("invalid username"))
+	}
 	return res[0].Result, nil
 }
 
@@ -88,6 +91,9 @@ func (s *Storage) SubmitTeacherCode(
 
 	now := time.Now()
 
+	if len(res[0].Result) == 0 {
+		return fmt.Errorf("%s: %w", op, errors.New("invalid input data"))
+	}
 	// finding codes for the current lesson
 	for _, attndCodes := range res[0].Result {
 		codeTimeslot := attndCodes.Schedule.Timeslot
@@ -233,6 +239,10 @@ func (s *Storage) SubmitRoomCode(
 	// finding current lesson room
 	var neededAttndRoom models.AttendanceRoom
 	now := time.Now()
+
+	if len(res[0].Result) == 0 {
+		return fmt.Errorf("%s: %w", op, errors.New("invalid input data"))
+	}
 	for _, attndRoom := range res[0].Result {
 		codeTimeslot := attndRoom.Schedule.Timeslot
 		// this must be it config but i am lazy

@@ -2,6 +2,7 @@ package surrdb
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/orenvadi/auth-grpc/internal/domain/models"
@@ -81,12 +82,12 @@ func (s *Storage) SaveStudent(ctx context.Context, student models.Student) (uid 
 
 func (s *Storage) UpdateTeacher(ctx context.Context, usr models.Teacher, teacherLogin, email string) (err error) {
 	const op = "storage.surrdb.UpdateTeacher"
-	return
+	return fmt.Errorf("%s: %w", op, errors.New("unimplemented UpdateTeacher"))
 }
 
 func (s *Storage) UpdateStudent(ctx context.Context, usr models.Student, email string) (err error) {
 	const op = "storage.surrdb.UpdateStudent"
-	return
+	return fmt.Errorf("%s: %w", op, errors.New("unimplemented UpdateStudent"))
 }
 
 type DbResGetTeacherProfileData struct {
@@ -112,6 +113,9 @@ func (s *Storage) GetTeacherProfileData(ctx context.Context, teacherLogin string
 		return models.Teacher{}, fmt.Errorf("%s: %w", op, err)
 	}
 
+	if len(res[0].Result) == 0 {
+		return models.Teacher{}, fmt.Errorf("%s: %w", op, errors.New("invalid username"))
+	}
 	teacher = res[0].Result[0]
 
 	return teacher, nil
@@ -127,7 +131,6 @@ func (s *Storage) GetStudentProfileData(ctx context.Context, studentLogin string
 
 	var data interface{}
 
-	println(studentLogin)
 	data, err = s.db.Query("SELECT * FROM Student WHERE StudentCode = $studentLogin;", map[string]string{
 		"studentLogin": studentLogin,
 	})
@@ -138,6 +141,10 @@ func (s *Storage) GetStudentProfileData(ctx context.Context, studentLogin string
 	err = surrealdb.Unmarshal(data, &res)
 	if err != nil {
 		return models.Student{}, fmt.Errorf("%s: %w", op, err)
+	}
+
+	if len(res[0].Result) == 0 {
+		return models.Student{}, fmt.Errorf("%s: %w", op, errors.New("invalid username"))
 	}
 
 	student = res[0].Result[0]

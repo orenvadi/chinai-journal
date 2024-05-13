@@ -2,6 +2,7 @@ package surrdb
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -60,6 +61,9 @@ func (s *Storage) GetAttendanceLessons(
 		return []models.Attendance{}, fmt.Errorf("%s: %w", op, err)
 	}
 
+	if len(res[0].Result) == 0 {
+		return []models.Attendance{}, fmt.Errorf("%s: %w", op, errors.New("invalid username"))
+	}
 	attendances := res[0].Result
 
 	return attendances, nil
@@ -115,6 +119,9 @@ func (s *Storage) GetAttendanceJournal(
 		return []models.AttendanceWithFullStudent{}, fmt.Errorf("%s: %w", op, err)
 	}
 
+	if len(res[0].Result) == 0 {
+		return []models.AttendanceWithFullStudent{}, fmt.Errorf("%s: %w", op, errors.New("invalid username"))
+	}
 	attendances := res[0].Result
 
 	return attendances, nil

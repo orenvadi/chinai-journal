@@ -8,20 +8,20 @@ import (
 	"github.com/spf13/viper"
 )
 
-type Config struct {
-	Env       string
-	Storage   Storage
-	TokenTTL  time.Duration
-	GRPC      GRPC
-	JwtSecret string
-}
-
 type Storage struct {
 	User        string
 	Password    string
 	Host        string
 	DbName      string
 	DbNameSpace string
+}
+
+type Config struct {
+	Env       string
+	Storage   Storage
+	TokenTTL  time.Duration
+	GRPC      GRPC
+	JwtSecret string
 }
 
 type GRPC struct {

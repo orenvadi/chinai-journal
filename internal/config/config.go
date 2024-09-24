@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-// jwt access token must live 7 days and refresh token 2 month
 type Config struct {
 	Env       string
 	Storage   Storage
